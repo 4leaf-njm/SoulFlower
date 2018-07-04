@@ -1,0 +1,162 @@
+@CHARSET "UTF-8";
+
+@font-face {
+  font-family: duepuntozero;
+  src: url(../fonts/duepuntozero/Duepuntozero-ExtraBoldTrial.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: droid-serif;
+  src: url(../fonts/droid-serif/DroidSerif-Bold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: droid-serif-normal;
+  src: url(../fonts/droid-serif/DroidSerif-Regular.ttf) format('truetype');
+}
+
+#wrapper {
+	background: url(../images/bg/bg_main.png) repeat-x 0 0;
+}
+
+#header {
+	overflow: hidden;
+}
+
+#header .head_rt {
+	width: 1200px;
+	margin: 0 auto;
+	height: 36px;
+    line-height: 36px;
+	text-align: right;
+}
+
+#header .head_rt .welcome {
+	display: inline-block;
+    color: #edf6fa;
+    font-family: '나눔고딕';
+    font-size: 11px;
+    font-weight: bold;
+}
+
+#header .head_rt .welcome span {
+	padding-right: 8px;
+}
+
+#header .head_rt .logout {
+	display: inline-block;
+    margin: 0 0 0 13px;
+}
+
+#header .head_rt .logout a {
+	position: relative;
+	bottom: 1px;
+    padding: 5px 10px;
+    color: #3c6893;
+    font-family: '나눔고딕';
+    font-weight: bold;
+    font-size: 8px;
+    background: #fff;
+    border: 1px solid #90c0d6;
+    border-radius: 3px;
+}
+
+#header .menu {
+    margin: 0px auto 5px;
+    padding: 6px 10px;
+	height: 60px;
+    width: 1230px;
+    border: 1.5px solid #f2fafe;
+    border-radius: 6px;
+    background: url(../images/bg/bg_menu.png) repeat-x 0 0;
+    box-shadow: 2px 2px 3px #aaa;
+}
+
+#header .menu .logo {
+	display: inline-block;
+	margin: 0 0 0 15px;
+	width: 15%;
+	height: 48px;
+	line-height: 47px;
+    color: #0658a9;
+	font-family: 'duepuntozero';
+    font-size: 25px;
+    text-shadow: 3px -1px 1px #ffffff;
+    letter-spacing: 4px;
+}
+
+#header .menu .gnb {
+	display: inline-block;
+	width: 83%;
+	height: 45px;
+    border: 2px solid #255487;
+    border-radius: 5px;
+	vertical-align: top;
+	background: url(../images/bg/bg_menu_inner.png) repeat-x 0 0;
+}
+
+#header .menu .gnb ul {
+	padding: 0 12px;
+}
+
+#header .menu .gnb li {
+	display: inline-block;
+	margin: 0 15px;
+}
+
+#header .menu .gnb li a {
+    display: block;
+    height: 45px;
+    line-height: 45px;
+    color: #f5fafe;
+    font-weight: bold;
+}
+
+#header .menu .gnb li.on a {
+    color: #f7ffad;
+}
+
+#container {
+    clear: both;
+	min-height: 593px;
+    padding: 25px 0 20px;
+}
+
+#container > .content {
+	width: 1200px;
+    margin: 0 auto;
+}
+
+#footer {
+	overflow: hidden;
+	height: 65px;
+	background: url(../images/bg/bg_footer.png) repeat-x 0 0;
+}
+
+#footer > div {
+	width: 1200px;
+	margin: 0 auto;
+}
+
+#footer .logo {
+    float: left;
+    height: 65px;
+    line-height: 65px;
+    color: #fff;
+    font-size: 19px;
+    text-shadow: 3px 3px 3px #4c4b4b;
+}
+
+#footer .copyright {
+	float: right;
+    height: 65px;
+    line-height: 65px;
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    text-shadow: 1.5px 1px 3px #3e3e3e;
+}
+
+.scrollBar {
+	overflow-y: scroll;
+}

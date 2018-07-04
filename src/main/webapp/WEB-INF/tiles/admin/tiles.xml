@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+	<definition name="adminLayout" template="/WEB-INF/tiles/admin/layouts/layout.jsp">
+		<put-attribute name="header" value="/WEB-INF/tiles/admin/components/header.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/tiles/admin/components/footer.jsp" />
+	</definition>
+
+	<definition name="emptyLayout" template="/WEB-INF/tiles/admin/layouts/empty.jsp">
+		<put-attribute name="content" value="" />
+	</definition>
+	
+	<definition name="admin/login" extends="emptyLayout">
+		<put-attribute name="content" value="/WEB-INF/views/admin/login.jsp" />
+	</definition>
+
+	<definition name="admin/join" extends="emptyLayout">
+		<put-attribute name="content" value="/WEB-INF/views/admin/join.jsp" />
+	</definition>
+
+	<definition name="admin/main" extends="adminLayout">
+		<put-attribute name="content" value="/WEB-INF/views/admin/main.jsp" />
+	</definition>
+
+	<definition name="admin/register" extends="adminLayout">
+		<put-attribute name="content" value="/WEB-INF/views/admin/register.jsp" />
+	</definition>
+
+	<definition name="admin/area" extends="adminLayout">
+		<put-attribute name="content" value="/WEB-INF/views/admin/area.jsp" />
+	</definition>
+	
+	<definition name="admin/company" extends="adminLayout">
+		<put-attribute name="content" value="/WEB-INF/views/admin/company.jsp" />
+	</definition>
+	
+	<definition name="admin/item" extends="adminLayout">
+		<put-attribute name="content" value="/WEB-INF/views/admin/item.jsp" />
+	</definition>
+	
+	<definition name="admin/account" extends="adminLayout">
+		<put-attribute name="content" value="/WEB-INF/views/admin/account.jsp" />
+	</definition>
+	
+</tiles-definitions>

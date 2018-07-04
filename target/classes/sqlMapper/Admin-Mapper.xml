@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Admin-Mapper">
+	<resultMap type="admin" id="adminMap">
+		<id property="adminId" column="admin_id" />
+		<result property="adminPwd" column="admin_pwd" />
+		<result property="adminName" column="admin_name" />
+		<result property="adminRegdate" column="admin_regdate" />
+		<result property="adminUseyn" column="admin_useyn" />
+		<result property="adminRootyn" column="admin_rootyn" />
+	</resultMap>
+	
+	<select id="selectAdminList" resultMap="adminMap">
+		SELECT
+			*
+		FROM
+			ADMIN
+		WHERE 
+			ADMIN_USEYN = 'Y'
+		ORDER BY
+			ADMIN_REGDATE DESC 
+	</select>
+	
+	<select id="selectAdminById" parameterType="str" resultMap="adminMap">
+		SELECT
+			*
+		FROM
+			ADMIN
+		WHERE
+			ADMIN_ID = #{adminId}
+	</select>
+	
+	<insert id="insertAdmin" parameterType="admin">
+		INSERT INTO ADMIN (
+			 ADMIN_ID
+			,ADMIN_PWD
+			,ADMIN_NAME 
+		    ,ADMIN_USEYN
+		) VALUES (
+			 #{adminId}
+			,#{adminPwd}
+			,#{adminName}
+			,'R'
+		)
+	</insert>
+	
+	<update id="updateAdmin" parameterType="admin">
+		UPDATE 
+			ADMIN
+		SET
+			 ADMIN_ID = #{adminId}
+			,ADMIN_PWD = #{adminPwd}
+			,ADMIN_NAME = #{adminName}
+		WHERE 
+			ADMIN_ID = #{adminId}
+	</update>
+	
+	<delete id="deleteAdmin" parameterType="str">
+		DELETE FROM
+			ADMIN
+		WHERE 
+			ADMIN_ID = #{adminId}
+	</delete>
+	
+	<update id="updateAdminUseyn" parameterType="admin">
+		UPDATE
+			ADMIN
+		SET
+			ADMIN_USEYN = #{adminUseyn}
+		WHERE
+			ADMIN_ID = #{adminId}
+	</update>
+	
+	<select id="selectAdminWaitList" resultMap="adminMap">
+		SELECT 
+			*
+		FROM
+			ADMIN
+		WHERE 
+			ADMIN_USEYN = 'R'
+		ORDER BY 
+			ADMIN_REGDATE DESC
+	</select>
+	
+	<delete id="deleteAdminAll">
+		DELETE FROM
+			ADMIN
+		WHERE
+			ADMIN_USEYN = 'N'
+	</delete>
+</mapper>

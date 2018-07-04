@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Company-Mapper">
+	<resultMap type="company" id="companyMap">
+		<id property="companyNo" column="company_no" />
+		<result property="companyName" column="company_name" />
+		<result property="searchToken" column="search_token" />
+	</resultMap>
+	
+	<select id="selectCompanyList" resultMap="companyMap">
+		SELECT
+			*
+		FROM
+			COMPANY
+	</select>
+	
+	<select id="selectCompanyByNo" parameterType="int" resultMap="companyMap">
+		SELECT
+			*
+		FROM
+			COMPANY
+		WHERE
+			COMPANY_NO = #{companyNo}
+	</select>
+	
+	<insert id="insertCompany" parameterType="company">
+		INSERT INTO COMPANY (
+			 COMPANY_NAME
+			,SEARCH_TOKEN
+		) VALUES (
+			 #{companyName}
+			,#{searchToken}
+		)
+	</insert>
+	
+	<update id="updateCompany" parameterType="company">
+		UPDATE 
+			COMPANY
+		SET
+			 COMPANY_NAME = #{companyName}
+			,SEARCH_TOKEN = #{searchToken}
+		WHERE 
+			COMPANY_NO = #{companyNo}
+	</update>
+	
+	<delete id="deleteCompany" parameterType="int">
+		DELETE FROM
+			COMPANY
+		WHERE 
+			COMPANY_NO = #{companyNo}
+	</delete>
+	
+	<select id="selectSearchCompany" parameterType="str" resultMap="companyMap">
+		SELECT 
+			*
+		FROM 
+			COMPANY 
+		WHERE 
+			SEARCH_TOKEN LIKE CONCAT('%', #{searchToken}, '%')
+	</select>
+</mapper>

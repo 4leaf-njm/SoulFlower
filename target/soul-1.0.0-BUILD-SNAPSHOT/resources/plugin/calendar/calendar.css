@@ -1,0 +1,43 @@
+/* Kurien / Kurien's Blog / http://blog.kurien.co.kr */
+/* 주석만 제거하지 않는다면, 어떤 용도로 사용하셔도 좋습니다. */
+
+@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+* {font-family: 'Nanum Gothic', serif;}
+
+#kCalendar {margin: 0 auto; width: 250px; height: 250px; }
+
+#kCalendar #header {height: 50px; line-height: 50px; text-align: center; font-size: 17px; font-weight: bold; background: #a4a9ad; color: #fff; border-top-left-radius: 12px; border-top-right-radius: 12px;}
+#kCalendar #header > span .button {color: #fff;}
+#kCalendar .button {color: #000; text-decoration: none;}
+#kCalendar #date {padding: 0 30px;}
+
+#kCalendar table {width: 250px; height: 200px;}
+#kCalendar caption {display: none;}
+#kCalendar th {height: 43px; border-bottom: 1px solid #eeeded; font-size: 12px;}
+#kCalendar td {height: 31px; font-size: 12px; cursor: pointer;}
+#kCalendar td.on {background: #79c2ff; border-radius: 20px; color: #fff;}
+
+#kCalendar .sun, #DailyCalendar .sun {text-align: center; color: deeppink;}
+#kCalendar .mon, #DailyCalendar .mon {text-align: center;}
+#kCalendar .tue, #DailyCalendar .tue {text-align: center;}
+#kCalendar .wed, #DailyCalendar .wed {text-align: center;}
+#kCalendar .thu, #DailyCalendar .thu {text-align: center;}
+#kCalendar .fri, #DailyCalendar .fri {text-align: center;}
+#kCalendar .sat, #DailyCalendar .sat {text-align: center; color: deepskyblue;}
+
+#YearCalendar table {width: 100%;}
+#YearCalendar td {height: 57px; font-size: 12px; font-family: 'droid-serif-normal'; cursor: pointer;}
+#YearCalendar td:hover {background: #30cbe7; color: #fff; border-radius: 7px;}
+#YearCalendar td.on {background: #15a5bf; color: #fff; border-radius: 7px;}
+
+#MonthCalendar table {width: 100%;}
+#MonthCalendar td {height: 57px; font-size: 12px; font-family: 'droid-serif-normal'; cursor: pointer;}
+#MonthCalendar td:hover {background: #30cbe7; color: #fff; border-radius: 7px;}
+#MonthCalendar td.on {background: #15a5bf; color: #fff; border-radius: 7px;}
+
+#DailyCalendar table {width: 100%;}
+#DailyCalendar th {height: 43px; border-bottom: 1px solid #eeeded; font-size: 12px;}
+#DailyCalendar td {height: 31px; font-size: 12px; font-family: 'droid-serif-normal'; cursor: pointer;}
+#DailyCalendar td:hover {background: #30cbe7; color: #fff; border-radius: 7px;}
+#DailyCalendar td.empty:hover {background: #fff; color: #333; border-radius: 0px; cursor: default;}
+#DailyCalendar td.on {background: #15a5bf; color: #fff; border-radius: 7px;}

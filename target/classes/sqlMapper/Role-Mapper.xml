@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Role-Mapper">
+	<resultMap type="role" id="roleMap">
+		<id property="roleNo" column="role_no" />
+		<result property="roleName" column="role_name" />
+		<result property="roleText" column="role_text" />
+	</resultMap>
+	
+	<select id="selectRoleList" resultMap="roleMap">
+		SELECT
+			*
+		FROM
+			ROLE
+	</select>
+	
+	<select id="selectRoleByNo" parameterType="int" resultMap="roleMap">
+		SELECT
+			*
+		FROM
+			ROLE
+		WHERE
+			ROLE_NO = #{roleNo}
+	</select>
+	
+	<insert id="insertRole" parameterType="role">
+		INSERT INTO ROLE (
+			  ROLE_NAME
+			 ,ROLE_TEXT
+		) VALUES (
+			  #{roleName}
+			 ,#{roleText}
+		)
+	</insert>
+	
+	<update id="updateRole" parameterType="role">
+		UPDATE 
+			ROLE
+		SET
+		    ROLE_NAME = #{roleName}
+		   ,ROLE_TEXT = #{roleText}
+		WHERE 
+			ROLE_NO = #{roleNo}
+	</update>
+	
+	<delete id="deleteRole" parameterType="int">
+		DELETE FROM
+			ROLE
+		WHERE 
+			ROLE_NO = #{roleNo}
+	</delete>
+</mapper>

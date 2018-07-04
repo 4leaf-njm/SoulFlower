@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Auth-Mapper">
+	<resultMap type="role" id="authMap">
+		<id property="authNo" column="auth_no" />
+		<result property="adminId" column="admin_id" />
+		<result property="roleNo" column="role_no" />
+	</resultMap>
+	
+	<select id="selectAuthList" resultMap="authMap">
+		SELECT
+			*
+		FROM
+			AUTHORITY
+	</select>
+	
+	<select id="selectAuthListById" parameterType="str" resultMap="authMap">
+		SELECT
+			*
+		FROM
+			AUTHORITY
+		WHERE
+			ADMIN_ID = #{adminId}
+	</select>
+	
+	<select id="selectAuthByNo" parameterType="int" resultMap="authMap">
+		SELECT
+			*
+		FROM
+			AUTHORITY
+		WHERE
+			AUTH_NO = #{authNo}
+	</select>
+	
+	<insert id="insertAuth" parameterType="role">
+		INSERT INTO AUTHORITY (
+			  ADMIN_ID
+			 ,ROLE_NO
+		) VALUES (
+			  #{adminId}
+			 ,#{roleNo}
+		)
+	</insert>
+	
+	<update id="updateAuth" parameterType="role">
+		UPDATE 
+			AUTHORITY
+		SET
+		   	ADMIN_ID = #{adminId}
+		   ,ROLE_NO = #{roleNo}
+		WHERE 
+			AUTH_NO = #{authNo}
+	</update>
+	
+	<delete id="deleteAuth" parameterType="int">
+		DELETE FROM
+			AUTHORITY
+		WHERE 
+			AUTH_NO = #{authNo}
+	</delete>
+	
+	<delete id="deleteAuthById" parameterType="str">
+		DELETE FROM
+			AUTHORITY
+		WHERE 
+			ADMIN_ID = #{adminId}
+	</delete>
+</mapper>
