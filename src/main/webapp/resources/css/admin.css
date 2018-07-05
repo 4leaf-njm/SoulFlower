@@ -211,6 +211,7 @@
 }
 
 .step03 .bottom .tit {
+	min-height: 30px;
 	font-size: 13px;
 	text-align: center;
 	font-weight: bold;
@@ -225,18 +226,19 @@
 .step03 .bottom .list {
     overflow-y: scroll;
     margin: 10px 0 0;
-    padding: 5px 10px;
+    padding: 5px;
     height: 155px;
     border: 1px solid #dedede;
 }
 
 .step03 .bottom .list li {
 	display: block;
-	margin: 12px 0;
+	margin: 5.5px 0;
 }
 
 .step03 .bottom .list li a {
 	font-size: 11px;
+    line-height: 135%;
 }
 
 .step03 .bottom .list li:hover a {
@@ -469,9 +471,15 @@
     outline: none;
 }
 
+.step06 .btn_box {
+	margin: 20px 0 0;
+	text-align: center;
+	font-size: 0;
+}
+
 .step06 .btn_final {
-    display: block;
-    margin: 20px auto 0;
+    display: inline-block;
+    margin: 0 3px;
     width: 130px;
     height: 40px;
     line-height: 40px;
@@ -480,6 +488,20 @@
     color: #fff;
     background: #636363;
     border-radius: 3px;
+}
+
+.step06 .btn_mod {
+    display: none;
+    margin: 0 3px;
+    width: 130px;
+    height: 40px;
+    line-height: 40px;
+	font-size: 13px;
+    font-weight: bold;
+    color: #333;
+    background: #fff;
+    border-radius: 3px;
+    border: 1px solid #636363;
 }
 
 .tbl_sub {
@@ -858,4 +880,27 @@
     font-weight: bold;
     border: 1px solid #dedede;
     border-radius: 5px;
+}
+
+.history {
+	
+	
+}
+
+.history ul {
+    overflow-y: scroll;
+    margin: 0 auto;
+    padding: 15px 20px;
+	width: 1000px;
+    height: 535px;
+    border: 1px solid #dedede;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    box-shadow: 3px 3px 3px #b5b5b5;
+}
+
+.history ul li {
+    margin: 10px;
+    font-family: 'droid-serif-normal';
+	font-size: 12px;
 }

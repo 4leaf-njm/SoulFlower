@@ -17,7 +17,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.dawn.soul.domain.AdminVO;
 import com.dawn.soul.domain.CompanyVO;
+import com.dawn.soul.domain.HistoryVO;
 import com.dawn.soul.service.CompanyService;
+import com.dawn.soul.service.HistoryService;
 import com.dawn.soul.util.AuthUtil;
 import com.dawn.soul.util.KeyUtil;
 
@@ -29,16 +31,16 @@ public class CompanyController {
 	private CompanyService companyService;
 	
 	@Autowired
+	private HistoryService historyService;
+	
+	@Autowired
 	private AuthUtil authUtil;
 	
 	@RequestMapping(value="/company.do", method=RequestMethod.GET)
-	public String company(@ModelAttribute("menu_code") String menu_code, Model model, HttpSession session,
-			              RedirectAttributes rttr) throws SQLException {
+	public String company(@ModelAttribute("menu_code") String menu_code, Model model, HttpSession session) throws SQLException {
 		AdminVO loginUser = (AdminVO) session.getAttribute("loginUser");
 		if(!authUtil.hasRole(loginUser.getAdminId(), "ROLE_SETTING_VIEW")) {
-			rttr.addAttribute("menu_code", "01");
-			rttr.addFlashAttribute("msg", "권한이 없습니다.");
-			return "redirect:main.do";
+			model.addAttribute("auth", "N");
 		}
 		List<CompanyVO> companyList = companyService.getCompanyList(); 
 		
@@ -48,15 +50,30 @@ public class CompanyController {
 	}
 	
 	@RequestMapping(value="/company.do", method=RequestMethod.POST)
-	public String company(String menu_code, CompanyVO company, RedirectAttributes rttr) throws SQLException {
+	public String company(String menu_code, CompanyVO company, HttpSession session, RedirectAttributes rttr) throws SQLException {
+		AdminVO loginUser = (AdminVO) session.getAttribute("loginUser");
 		companyService.insertCompany(company);
+		
+		String text = loginUser.getAdminName() + " (" + loginUser.getAdminId() + ") 님이 " + "상조회사 관리에서 " + company.getCompanyName() + "를 추가했습니다.";
+		HistoryVO history = new HistoryVO();
+		history.setHistoryText(text);
+		historyService.insertHistory(history);
+		
 		rttr.addAttribute("menu_code", menu_code);
 		return "redirect:company.do";
 	}
 	
 	@RequestMapping(value="/removeCompany.do", method=RequestMethod.GET)
-	public String company(String menu_code, @RequestParam("no") int companyNo, RedirectAttributes rttr) throws SQLException {
+	public String company(String menu_code, @RequestParam("no") int companyNo, HttpSession session, RedirectAttributes rttr) throws SQLException {
+		AdminVO loginUser = (AdminVO) session.getAttribute("loginUser");
+		CompanyVO company = companyService.getCompanyById(companyNo);
 		companyService.removeCompany(companyNo);
+		
+		String text = loginUser.getAdminName() + " (" + loginUser.getAdminId() + ") 님이 " + "상조회사 관리에서 " + company.getCompanyName() + "를 삭제했습니다.";
+		HistoryVO history = new HistoryVO();
+		history.setHistoryText(text);
+		historyService.insertHistory(history);
+		
 		rttr.addAttribute("menu_code", menu_code);
 		return "redirect:company.do";
 	}

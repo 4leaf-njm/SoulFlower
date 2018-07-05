@@ -75,6 +75,10 @@ function kCalendar(id, date) {
 	
 	var dateNum = 1 - currentDay;
 	
+	var today = new Date();
+	var todayYear = today.getFullYear();
+	var todayMonth = today.getMonth() + 1;
+	todayMonth = (todayMonth + '').length == 1 ? '0' + todayMonth : todayMonth;
 	for(var i = 0; i < week; i++) {
 		calendar += '			<tr>';
 		for(var j = 0; j < 7; j++, dateNum++) {
@@ -82,7 +86,10 @@ function kCalendar(id, date) {
 				calendar += '				<td class="' + dateString[j] + '"> </td>';
 				continue;
 			}
-			calendar += '				<td class="' + dateString[j] + '">' + dateNum + '</td>';
+			if(currentYear == todayYear && currentMonth == todayMonth && currentDate == dateNum)
+				calendar += '				<td class="' + dateString[j] + ' on">' + dateNum + '</td>';
+			else
+				calendar += '				<td class="' + dateString[j] + '">' + dateNum + '</td>';
 		}
 		calendar += '			</tr>';
 	}
@@ -96,9 +103,114 @@ function kCalendar(id, date) {
 
 function clickEvent() {
 	$('#kCalendar td').on('click', function(){
+		var date = $('#kCalendar caption').data('date') + '-';
+		date += ($(this).text().length == 1) ? '0' + $(this).text() : $(this).text();
+		getSalesByDate(date);
 		$('#kCalendar td').removeClass('on');
 		$(this).addClass('on');
 	});
+}
+
+function getSalesByDate(date) {
+	$.ajax({
+		url: 'getSalesByDate.do',
+		type: 'post',
+		data: {'date': date},
+		dataType: 'json',
+		success: function(data) {
+			var html = '';
+			html = '<span>' + date + '</span>영업한 상조';
+			$target = $('.step03 .bottom');
+			$target.find('.tit').html(html);
+			html = '';
+			html += '<ul>';
+			$.each(data, function(index, value) {
+				var text = value.companyName + "<br/>(" + value.funeral + ", " + value.deadName + ")";
+				html += '<li><a href="javascript:clickCompany(\'' + value.salesNo + '\')">' + text + '</a></li>';
+			});
+			html += '</ul>';
+			$target.find('.list').html(html);
+		},
+		error: function() {
+			alert('error');
+		}
+	});
+}
+
+function clickCompany(salesNo) {
+	$.ajax({
+		url:'getSales.do',
+		type: 'post',
+		data: {'salesNo': salesNo},
+		dataType: 'json',
+		success: function(data) {
+			var frm = document.frm_reg;
+			frm.salesNo.value = salesNo;
+			$('.btn_final').text('영업 수정');
+			$('.btn_mod').css('display', 'inline-block');
+			$.each(data, function(key, value) {
+				$('.sel_area').val(getValue(key, 'areaName')).prop('selected', true);
+				$('.sel_comp').val(getValue(key, 'companyName')).prop('selected', true);
+				$('#funeral').val(getValue(key, 'funeral'));
+				$('#deadName').val(getValue(key, 'deadName'));
+				$('#hosil').val(getValue(key, 'hosil'));
+				$('#leader').val(getValue(key, 'leader'));
+				
+				var html = '';
+				var count = 1;
+				$('.item_final').html('');
+				html += '<table><tbody>';
+				html += '	<tr>';
+				html += '		<th width="40">번호</th>';      
+				html += '		<th width="*">품목</th>';       
+				html += '		<th width="40">수량</th>';      
+				html += '		<th width="105">수익</th>';     
+				html += '		<th width="105">리베이트</th>';  
+				html += '		<th width="60"></th>';        
+				html += '	</tr>';
+			    html += '</tbody></table>';
+				$('.item_final').html(html);
+				$.each(value, function(idx, val) {
+					var itemName = val.itemName;
+					var amount = val.amount;
+					var profit = val.profit;
+					var rebate = val.rebate;
+					
+					html = '';
+					html += '<tr>'
+					html += '	<td>' + count + '</td>'
+					html += '	<td>' + itemName + '</td>'
+					html += '	<td>' + amount + '</td>'
+					html += '	<td>' + comma(profit) + ' 원</td>'
+					html += '	<td>' + comma(rebate) + ' 원</td>'
+					html += '	<td><a href="#" class="btn_remove">삭제</a></td>'
+					html += '</tr>'
+					$('.item_final table tbody').append(html);
+					removeEvent();
+					
+					html = '';
+					html += '<div id="itemHide' + count + '" class="itemHide">';
+					html += '	<input type="hidden" name="itemName" value="' + itemName + '" />'
+					html += '	<input type="hidden" name="amount" value="' + amount + '" />'
+					html += '	<input type="hidden" name="profit" value="' + profit + '" />'
+					html += '	<input type="hidden" name="rebate" value="' + rebate + '" />'
+					html += '</div>';
+					$('.item_final').append(html);
+					count ++;
+				});
+			})
+		},
+		error: function() {
+			alert('error');
+		}
+	});
+}
+
+function getValue(map, key) {
+	var split = map.split(key)[1]
+	var idx1 = split.indexOf('=');
+	var idx2 = split.indexOf(',');
+	return split.substr(idx1+1, idx2-1);
 }
 
 function yearCalendar(id, year, defaultDate, select) {

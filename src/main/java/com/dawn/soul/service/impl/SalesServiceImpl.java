@@ -7,8 +7,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.dawn.soul.dao.HistoryDAO;
 import com.dawn.soul.dao.SalesDAO;
 import com.dawn.soul.dao.SalesDetailDAO;
+import com.dawn.soul.domain.AdminVO;
+import com.dawn.soul.domain.HistoryVO;
 import com.dawn.soul.domain.SalesDetailVO;
 import com.dawn.soul.domain.SalesVO;
 import com.dawn.soul.service.SalesService;
@@ -22,6 +25,9 @@ public class SalesServiceImpl implements SalesService {
 	@Autowired
 	private SalesDetailDAO salesDetailDAO;
 	
+	@Autowired
+	private HistoryDAO historyDAO;
+	
 	@Override
 	public List<SalesVO> getSalesList() throws SQLException {
 		return salesDAO.selectSalesList();
@@ -33,26 +39,48 @@ public class SalesServiceImpl implements SalesService {
 	}
 	
 	@Override
-	public SalesVO getSalesById(int salesNo) throws SQLException {
+	public SalesVO getSalesByNo(int salesNo) throws SQLException {
 		return salesDAO.selectSalesByNo(salesNo);
 	}
 
 	@Override
-	public void insertSales(SalesVO sales, List<SalesDetailVO> salesList) throws SQLException {
+	public void insertSales(AdminVO admin, SalesVO sales, List<SalesDetailVO> salesList) throws SQLException {
 		salesDAO.insertSales(sales);
 		int salesNo = salesDAO.selectSalesMaxNo();
+		String items = "[";
+		int idx = 0;
 		for(SalesDetailVO salesDetail : salesList) {
 			salesDetail.setSalesNo(salesNo);
 			salesDetailDAO.insertSalesDetail(salesDetail);
+			items += salesDetail.getItemName();
+			items += (idx++ == salesList.size()-1) ? "" : ", "; 
 		}
+		items += "]";
+		
+		String text = admin.getAdminName() + " (" + admin.getAdminId() + ") 님이 " + sales.getSalesDate() + " 일자에 " + sales.getCompanyName() + " 에게 " + items + " 등을 영업 등록 했습니다.";
+		HistoryVO history = new HistoryVO();
+		history.setHistoryText(text);
+		historyDAO.insertHistory(history);
 	}
 
 	@Override
-	public void modifySales(SalesVO sales, List<SalesDetailVO> salesList) throws SQLException {
+	public void modifySales(AdminVO admin, SalesVO sales, List<SalesDetailVO> salesList) throws SQLException {
 		salesDAO.updateSales(sales);
+		String items = "[";
+		int idx = 0;
+		salesDetailDAO.deleteSalesDetail(sales.getSalesNo());
 		for(SalesDetailVO salesDetail : salesList) {
-			salesDetailDAO.updateSalesDetail(salesDetail);
+			salesDetail.setSalesNo(sales.getSalesNo());
+			salesDetailDAO.insertSalesDetail(salesDetail);
+			items += salesDetail.getItemName();
+			items += (idx++ == salesList.size()-1) ? "" : ", "; 
 		}
+		items += "]";
+		
+		String text = admin.getAdminName() + " (" + admin.getAdminId() + ") 님이 " + sales.getSalesDate() + " 일자에 " + sales.getCompanyName() + " 의 영업 정보를 " + items + " 로 변경 했습니다.";
+		HistoryVO history = new HistoryVO();
+		history.setHistoryText(text);
+		historyDAO.insertHistory(history);
 	}
 
 	@Override
@@ -86,4 +114,15 @@ public class SalesServiceImpl implements SalesService {
 		return salesDAO.selectSearchSales(params);
 	}
 
+	@Override
+	public List<SalesVO> getSalesListByDate(String salesDate) throws SQLException {
+		return salesDAO.selectSalesListByDate(salesDate);
+	}
+
+	@Override
+	public void removeSalesDetail(int salesNo) throws SQLException {
+		salesDetailDAO.deleteSalesDetail(salesNo);
+	}
+
+	
 }

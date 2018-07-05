@@ -86,6 +86,11 @@
 					</c:choose>
 				</tr>
 				<c:choose>
+				<c:when test="${auth eq 'N' }">
+				<tr class="empty">
+						<td colspan="3">해당 권한이 없습니다.</td>
+					</tr>
+				</c:when>
 				<c:when test="${empty itemCheckList or empty salesDataMap}">
 					<tr class="empty">
 						<td colspan="3">조회된 데이터가 없습니다.</td>
@@ -149,7 +154,7 @@
 				</c:otherwise>
 				</c:choose>
 			</table>
-			<c:if test="${!empty itemCheckList and !empty salesDataMap}">
+			<c:if test="${!empty itemCheckList and !empty salesDataMap and auth ne 'N'}">
 				<div class="sales_res">
 					<h3 class="res">
 						총 매출<span class="sale_money"><fmt:formatNumber value="${totalProfit }" pattern="#,##0" /></span>&nbsp;-&nbsp;
@@ -225,6 +230,10 @@
 		
 		$('.btn_sale').click(function(event){
 			event.preventDefault();
+			if('${auth}' == 'N') {
+				alert('조회할 수 있는 권한이 없습니다.');
+				return;
+			}
 			var checked = false;
 			var type = $('.sel_cal').find('option:selected').val();
 			var date;

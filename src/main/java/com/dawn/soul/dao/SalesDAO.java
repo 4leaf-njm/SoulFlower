@@ -21,4 +21,6 @@ public interface SalesDAO {
 	int selectSalesMaxNo() throws SQLException;
 	
 	List<SalesVO> selectSearchSales(HashMap<String, Object> params) throws SQLException;
+	
+	List<SalesVO> selectSalesListByDate(String salesDate) throws SQLException;
 }

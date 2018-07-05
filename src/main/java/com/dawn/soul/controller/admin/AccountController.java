@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.dawn.soul.domain.AdminVO;
+import com.dawn.soul.domain.HistoryVO;
 import com.dawn.soul.domain.RoleVO;
 import com.dawn.soul.service.AdminService;
+import com.dawn.soul.service.HistoryService;
 import com.dawn.soul.service.RoleService;
 import com.dawn.soul.util.AuthUtil;
 
@@ -32,6 +34,9 @@ public class AccountController {
 	
 	@Autowired
 	private RoleService roleService;
+	
+	@Autowired
+	private HistoryService historyService;
 	
 	@Autowired
 	private AuthUtil authUtil;
@@ -69,21 +74,25 @@ public class AccountController {
 	
 	@ResponseBody
 	@RequestMapping(value="/approveAdmin.do", method=RequestMethod.POST)
-	public Map<String, Object> approve(String adminId, String useyn) throws SQLException {
+	public Map<String, Object> approve(String adminId, String useyn, HttpSession session) throws SQLException {
+		AdminVO loginUser = (AdminVO) session.getAttribute("loginUser");
+		AdminVO admin = adminService.getAdminById(adminId); 
 		Map<String, Object> data = new HashMap<String, Object>();
 		adminService.modifyAdminUseyn(adminId, useyn);
 		String msg = "";
+		String res = "";
 		if(useyn.equals("Y")) {
 			msg = "승인 되었습니다.";
-			List<RoleVO> roleList = new ArrayList<RoleVO>();
-			RoleVO role = new RoleVO();
-			role.setAdminId(adminId);
-			role.setRoleNo(1);
-			roleList.add(role);
-			roleService.insertAuth(adminId, roleList);
+			res = "승인";
 		} else if (useyn.equals("N")) {
 			msg = "승인 거부 되었습니다.";
+			res = "거부";
 		}
+		String text = loginUser.getAdminName() + " (" + loginUser.getAdminId() + ") 님이 " + "계정 관리에서 " + admin.getAdminName() + " (" + admin.getAdminId() + ") " + " 님의 가입을 " + res + "했습니다.";
+		HistoryVO history = new HistoryVO();
+		history.setHistoryText(text);
+		historyService.insertHistory(history);
+		
 		data.put("msg", msg);
 		return data;
 	}
@@ -94,12 +103,14 @@ public class AccountController {
 		Map<String, Object> data = new HashMap<String, Object>();
 
 		List<RoleVO> roleList = new ArrayList<RoleVO>();
-		String[] rolesArr = roles.split(", ");
-		for(String role : rolesArr) {
-			RoleVO r = new RoleVO();
-			r.setAdminId(adminId);
-			r.setRoleNo(Integer.parseInt(role));
-			roleList.add(r);
+		if(!roles.equals("")) {
+			String[] rolesArr = roles.split(", ");
+			for(String role : rolesArr) {
+				RoleVO r = new RoleVO();
+				r.setAdminId(adminId);
+				r.setRoleNo(Integer.parseInt(role));
+				roleList.add(r);
+			}
 		}
 		roleService.insertAuth(adminId, roleList);
 		String msg = "권한이 변경되었습니다.";

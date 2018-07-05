@@ -120,4 +120,13 @@
 		ORDER BY
 			SALESDATE ASC
 	</select>
+	
+	<select id="selectSalesListByDate" parameterType="str" resultMap="salesMap">
+		SELECT
+			*
+		FROM
+			SALES
+		WHERE 
+			SALESDATE = #{salesDate}
+	</select>
 </mapper>

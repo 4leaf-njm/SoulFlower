@@ -12,5 +12,6 @@
 		<typeAlias type="com.dawn.soul.domain.SalesVO" alias="sales" />
 		<typeAlias type="com.dawn.soul.domain.SalesDetailVO" alias="sales_detail" />
 		<typeAlias type="com.dawn.soul.domain.RoleVO" alias="role" />
+		<typeAlias type="com.dawn.soul.domain.HistoryVO" alias="history" />
 	</typeAliases>
 </configuration>

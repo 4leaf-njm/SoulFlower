@@ -51,7 +51,14 @@
 	</div>
 
 	<script>
+		if('${msg}' != '') {
+			alert('${msg}');	
+		}
 		function insert() {
+			if('${auth}' == 'N') {
+				alert('해당 권한이 없습니다.');
+				return;
+			}
 			var frm = document.frm_add;
 			if(frm.itemName.value == '') {
 				alert('품목명 입력해주세요.');
@@ -66,6 +73,10 @@
 		}	
 		
 		function remove(no, name, menu_code) {
+			if('${auth}' == 'N') {
+				alert('해당 권한이 없습니다.');
+				return;
+			}
 			var result = confirm('[' + name + '] 을(를) 삭제하시겠습니까 ?');
 			if(result) 
 				location.href = 'removeItem.do?no=' + no + '&menu_code=' + menu_code;

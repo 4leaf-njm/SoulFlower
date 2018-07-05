@@ -54,4 +54,9 @@ public class SalesDAOImpl implements SalesDAO {
 		return sqlSession.selectList(NAMESPACE + ".selectSearchSales", params);
 	}
 
+	@Override
+	public List<SalesVO> selectSalesListByDate(String salesDate) throws SQLException {
+		return sqlSession.selectList(NAMESPACE + ".selectSalesListByDate", salesDate);
+	}
+
 }

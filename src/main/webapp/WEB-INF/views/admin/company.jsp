@@ -44,7 +44,14 @@
 	</div>
 
 	<script>
+		if('${msg}' != '') {
+			alert('${msg}');	
+		}
 		function insert() {
+			if('${auth}' == 'N') {
+				alert('해당 권한이 없습니다.');
+				return;
+			}
 			var frm = document.frm_add;
 			if(frm.companyName.value == '') {
 				alert('상조회사명을 입력해주세요.');
@@ -55,6 +62,10 @@
 		}	
 		
 		function remove(no, name, menu_code) {
+			if('${auth}' == 'N') {
+				alert('해당 권한이 없습니다.');
+				return;
+			}
 			var result = confirm('[' + name + '] 을(를) 삭제하시겠습니까 ?');
 			if(result) 
 				location.href = 'removeCompany.do?no=' + no + '&menu_code=' + menu_code;

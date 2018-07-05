@@ -6,6 +6,7 @@
 	<div class="content">
 		<div style="font-size: 0;">
 			<form method="post" name="frm_reg">
+				<input type="hidden" name="salesNo" value="0" />
 				<div class="section step01">
 					<h3><span class="txt_step">STEP 01</span>지역 선택</h3>
 					<div class="scrollbar-outer" style="width: 150px; height: 250px; margin: 0 auto;">
@@ -33,14 +34,8 @@
 						</c:forEach>
 					</select>
 					<div class="bottom">
-						<p class="tit"><span>2018-06-01</span>영업한 상조</p>
-						<div class="list scrollbar-outer">
-							<ul>
-								<c:forEach var="company" items="${companyList }">
-									<li><a href="#">${company.companyName}</a></li>
-								</c:forEach>
-							</ul>
-						</div>
+						<p class="tit"></p>
+						<div class="list scrollbar-outer"></div>
 					</div>
 				</div>
 				<div class="section step04">
@@ -137,7 +132,10 @@
 							</tr>
 						</table>
 					</div>
-					<a href="#" class="btn_final">영업 등록</a>
+					<div class="btn_box">
+						<a href="#" class="btn_final">영업 등록</a>
+						<a href="#" class="btn_mod">수정 취소</a>
+					</div>
 				</div>
 			</form>
 		</div>
@@ -150,6 +148,15 @@
 
 	window.onload = function() {
 		kCalendar('kCalendar');
+		
+		var today = new Date();
+		var year = today.getFullYear();
+		var month = today.getMonth() + 1;
+		var day = today.getDate();
+		
+		month = (month+'').length == 1 ? '0' + month : month;
+		day = (day+'').length == 1 ? '0' + day : day;
+		getSalesByDate(year + '-' + month + '-' + day);
 	}
 	itemEvent();
 	
@@ -259,6 +266,7 @@
 			});
 		});
 		
+		var count = 1;
 		$('.btn_reg').click(function(event) {
 			event.stopImmediatePropagation();
 			event.preventDefault();
@@ -266,6 +274,11 @@
 				alert('적용 버튼을 눌러주세요.');
 				return;
 			}
+			if($('.itemHide:last').attr('id') != undefined) {
+				var no = parseInt($('.itemHide:last').attr('id').replace('itemHide', '')) + 1;
+				count = no;
+			}
+				
 			var $parent = $(this).parents('tr');
 			var itemName = $parent.find('.sel_item').val();
 			var amount = $parent.find('.txt_amount').val();
@@ -299,7 +312,6 @@
 		event.preventDefault();
 		var $table = $('.item_wrap table');
 		var lastItemNo = $table.find("tr:last").attr("class").replace("item", "");
-		console.log(lastItemNo);
         var newitem = $table.find("tr:eq(1)").clone();
         newitem.find('input:radio[class=rd_rebate]').attr('name', 'rd_rebate' + (parseInt(lastItemNo)+1));
         newitem.find('td:last').html('<a href="#" class="btn_removeItem"><i class="fas fa-minus"></i></a>');
@@ -347,6 +359,10 @@
 	$('.btn_final').click(function(event){
 		event.preventDefault();
 		
+		if('${auth}' == 'N') {
+			alert('해당 권한이 없습니다.');
+			return;
+		}
 		var frm = document.frm_reg;
 		var date = $('#kCalendar caption').data('date');
 		var day = $('#kCalendar td.on').text();
@@ -383,16 +399,48 @@
 		} else if ($('.itemHide').length == 0) {
 			alert('품목을 등록해주세요.');
 			return;
-		} else {
-			var result = confirm('이대로 등록하시겠습니까 ?');
-			if(!result) return;
 		}
+		var result;
+		var text = $('.btn_final').text();
+		if(text == '영업 수정') {
+			frm.action = 'modifySales.do';
+			result = confirm('영업정보를 변경 하시겠습니까 ?');
+		} else {
+			result = confirm('영업을 등록하시겠습니까 ?');
+		}
+		if(!result) return;
 		frm.salesDate.value = date;
 		renameForItem();
 		frm.submit();
 	});
 	
-	var count = 1;
+	$('.btn_mod').click(function(event){
+		event.preventDefault();
+		
+		$(this).css('display', 'none');
+		$('.btn_final').text('영업 등록');
+		$('.sel_area').val('').prop('selected', true);
+		$('.sel_comp').val('').prop('selected', true);
+		$('#funeral').val('');
+		$('#deadName').val('');
+		$('#hosil').val('');
+		$('#leader').val('');
+		
+		var html = '';
+		$('.item_final').html('');
+		html += '<table><tbody>';
+		html += '	<tr>';
+		html += '		<th width="40">번호</th>';      
+		html += '		<th width="*">품목</th>';       
+		html += '		<th width="40">수량</th>';      
+		html += '		<th width="105">수익</th>';     
+		html += '		<th width="105">리베이트</th>';  
+		html += '		<th width="60"></th>';        
+		html += '	</tr>';
+	    html += '</tbody></table>';
+		$('.item_final').html(html);
+	});
+	
 	function searchCompany(companyName) {
 		$('.sel_comp').val(companyName).prop('selected', true);
 		$('.txt_search').val('');

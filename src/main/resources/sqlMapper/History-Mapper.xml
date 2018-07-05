@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="History-Mapper">
+	<resultMap type="history" id="historyMap">
+		<id property="historyNo" column="history_no" />
+		<result property="historyText" column="history_text" />
+		<result property="historyDate" column="history_date" />
+	</resultMap>
+	
+	<select id="selectHistoryList" resultMap="historyMap">
+		SELECT
+			*
+		FROM
+			HISTORY
+		ORDER BY 
+			HISTORY_NO DESC
+	</select>
+	
+	<select id="selectHistoryByNo" parameterType="int" resultMap="historyMap">
+		SELECT
+			*
+		FROM
+			HISTORY
+		WHERE
+			HISTORY_NO = #{historyNo}
+	</select>
+	
+	<insert id="insertHistory" parameterType="history">
+		INSERT INTO HISTORY (
+			HISTORY_TEXT
+		) VALUES (
+			#{historyText}
+		)
+	</insert>
+	
+	<update id="updateHistory" parameterType="history">
+		UPDATE 
+			HISTORY
+		SET
+			HISTORY_TEXT = #{historyText}
+		WHERE 
+			HISTORY_NO = #{historyNo}
+	</update>
+	
+	<delete id="deleteHistory" parameterType="int">
+		DELETE FROM
+			HISTORY
+		WHERE 
+			HISTORY_NO = #{historyNo}
+	</delete>
+</mapper>

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.dawn.soul.domain.AdminVO;
@@ -116,11 +117,10 @@ public class AdminController {
 	
 	@RequestMapping(value="/main.do", method=RequestMethod.GET)
 	public String main(@ModelAttribute("menu_code") String menu_code, @RequestParam(value="type", defaultValue="daily") String type, 
-			           String date, String areaCheckList, Model model, HttpSession session, RedirectAttributes rttr) throws SQLException {
+			           String date, String areaCheckList, Model model, HttpSession session) throws SQLException {
 		AdminVO loginUser = (AdminVO) session.getAttribute("loginUser");
 		if(!authUtil.hasRole(loginUser.getAdminId(), "ROLE_SALES_VIEW")) {
-			rttr.addFlashAttribute("msg", "권한이 없습니다.");
-			return "redirect:login.do";
+			model.addAttribute("auth", "N");
 		}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		if(date == null)
@@ -224,13 +224,11 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/register.do", method=RequestMethod.GET)
-	public String register(@ModelAttribute("menu_code") String menu_code, Model model, HttpSession session,
-			               RedirectAttributes rttr) throws SQLException {
+	public String register(@ModelAttribute("menu_code") String menu_code, Model model, HttpSession session) throws SQLException {
 		AdminVO loginUser = (AdminVO) session.getAttribute("loginUser");
 		if(!authUtil.hasRole(loginUser.getAdminId(), "ROLE_SALES_REGISTER")) {
-			rttr.addAttribute("menu_code", "01");
-			rttr.addFlashAttribute("msg", "권한이 없습니다.");
-			return "redirect:main.do";
+			model.addAttribute("msg", "권한이 없습니다.");
+			model.addAttribute("auth", "N");
 		}
 		List<AreaVO> areaList = areaService.getAreaList();
 		List<CompanyVO> companyList = companyService.getCompanyList();
@@ -244,12 +242,26 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/register.do", method=RequestMethod.POST)
-	public String register(String menu_code, SalesVO sales, SalesListRequest salesList, 
+	public String register(String menu_code, SalesVO sales, SalesListRequest salesList, HttpSession session, 
 			               RedirectAttributes rttr) throws SQLException {
-		salesService.insertSales(sales, salesList.getSalesList());
+		AdminVO loginUser = (AdminVO) session.getAttribute("loginUser");
+		salesService.insertSales(loginUser, sales, salesList.getSalesList());
 		
 		rttr.addAttribute("menu_code", menu_code);
 		rttr.addFlashAttribute("msg", "등록이 완료되었습니다.");
+		return "redirect:register.do";
+	}
+	
+	@RequestMapping(value="/modifySales.do", method=RequestMethod.POST)
+	public String modifySales(String menu_code, SalesVO sales, SalesListRequest salesList, HttpSession session, 
+			               RedirectAttributes rttr) throws SQLException {
+		AdminVO loginUser = (AdminVO) session.getAttribute("loginUser");
+		System.out.println(sales);
+		System.out.println(salesList);
+		salesService.modifySales(loginUser, sales, salesList.getSalesList());
+		
+		rttr.addAttribute("menu_code", menu_code);
+		rttr.addFlashAttribute("msg", "변경이 완료되었습니다.");
 		return "redirect:register.do";
 	}
 	
@@ -410,5 +422,21 @@ public class AdminController {
 		model.addAttribute("totalRealProfit", totalProfit - totalRebate);
 		
 		return "admin/main";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/getSalesByDate.do", method=RequestMethod.POST)
+	public List<SalesVO> getSalesByDate(@RequestParam("date") String salesDate) throws SQLException {
+		return salesService.getSalesListByDate(salesDate);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/getSales.do", method=RequestMethod.POST)
+	public Map<Object, Object> getSales(Integer salesNo) throws SQLException {
+		Map<Object, Object> dataMap = new HashMap<Object, Object>();
+		SalesVO sales = salesService.getSalesByNo(salesNo);
+		List<SalesDetailVO> salesDetList = salesService.getSalesDetList(salesNo);
+		dataMap.put(sales, salesDetList);
+		return dataMap;
 	}
 }

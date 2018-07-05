@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <div id="container">
 	<div class="content">
@@ -13,7 +14,7 @@
 				<th>비고</th>
 			</tr>
 			<c:choose>
-			<c:when test="${empty adminList }">
+			<c:when test="${empty adminWaitList }">
 			<tr>
 				<td colspan="3">가입 신청한 사용자가 없습니다.</td>
 			</tr>
@@ -41,17 +42,26 @@
 				</c:forEach>
 				<th>비고</th>
 			</tr>
-			<c:forEach var="admin" items="${adminList }" >
-			<c:if test="${admin.adminRootyn ne 'Y'}">
-			<tr>
-				<td>${admin.adminName } (${admin.adminId })</td>
-				<c:forEach var="role" items="${roleList }">
-					<td><input type="checkbox" name="roleList${admin.adminId }" value="${role.roleNo }"></td>
+			<c:choose>
+			<c:when test="${empty adminList }">
+				<tr>
+					<td colspan="${fn:length(roleList) + 2}">조회된 사용자가 없습니다.</td>
+				</tr>
+			</c:when>
+			<c:otherwise>
+				<c:forEach var="admin" items="${adminList }" >
+					<c:if test="${admin.adminRootyn ne 'Y'}">
+					<tr>
+						<td>${admin.adminName } (${admin.adminId })</td>
+						<c:forEach var="role" items="${roleList }">
+							<td><input type="checkbox" name="roleList${admin.adminId }" value="${role.roleNo }"></td>
+						</c:forEach>
+						<td><a href="javascript:authority('${admin.adminId }')" class="btn">적용</a></td>
+					</tr>
+					</c:if>
 				</c:forEach>
-				<td><a href="javascript:authority('${admin.adminId }')" class="btn">적용</a></td>
-			</tr>
-			</c:if>
-			</c:forEach>
+			</c:otherwise>
+			</c:choose>
 		</table>
 	</div>
 	<script>
