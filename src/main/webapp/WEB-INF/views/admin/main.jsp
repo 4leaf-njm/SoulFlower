@@ -57,25 +57,37 @@
 					<th width="70">
 						<a href="javascript:show_comp()"><i class="far fa-caret-square-down"></i>상조</a>
 						<div class="hide_box comp_box">
-							<label><input type="checkbox" checked="checked" value="all"/>전체</label>
-							<c:forEach var="company" items="${companyList }">
-								<label><input type="checkbox" name="company" value="${company }"/>${company }</label>
-							</c:forEach>
-							<a href="javascript:go_searchOk('company')" class="btn-sm">확인</a>
+							<div>
+								<div>
+									<label><input type="checkbox" checked="checked" value="all"/>전체</label>
+									<c:if test="${auth ne 'N' }">
+										<c:forEach var="company" items="${companyList }">
+											<label><input type="checkbox" name="company" value="${company }"/>${company }</label>
+										</c:forEach>
+									</c:if>
+								</div>
+								<a href="javascript:go_searchOk('company')" class="btn-sm">확인</a>
+							</div>
 						</div>
 					</th>
 					<th width="70">
 						<a href="javascript:show_item()">품목<i class="far fa-caret-square-down"></i></a>
 						<div class="hide_box item_box">
-							<label><input type="checkbox" checked="checked" value="all"/>전체</label>
-							<c:forEach var="item" items="${itemList }">
-								<label><input type="checkbox" name="item" value="${item }"/>${item }</label>
-							</c:forEach>
-							<a href="javascript:go_searchOk('item')" class="btn-sm">확인</a>
+							<div>
+								<div>
+									<label><input type="checkbox" checked="checked" value="all"/>전체</label>
+									<c:if test="${auth ne 'N' }">
+										<c:forEach var="item" items="${itemList }">
+											<label><input type="checkbox" name="item" value="${item }"/>${item }</label>
+										</c:forEach>
+									</c:if>
+								</div>
+								<a href="javascript:go_searchOk('item')" class="btn-sm">확인</a>
+							</div>
 						</div>
 					</th>
 					<c:choose>
-					<c:when test="${empty itemCheckList or empty salesDataMap}">
+					<c:when test="${empty itemCheckList or empty salesDataMap or auth eq 'N'}">
 						<th>품목 없음</th>
 					</c:when>
 					<c:otherwise>
@@ -218,13 +230,19 @@
 				$(this).find('td').first().find('.fas').addClass('fa-caret-down');
 				$(this).find('td').first().find('.fas').removeClass('fa-caret-up');
 				var target = $(this).data('target');
-				$('#target' + target).fadeOut();
+				if(checkExplorer()) 
+					$('#target' + target).hide();
+				else
+					$('#target' + target).fadeOut();
 			} else {
 				$(this).addClass('on');
 				$(this).find('td').first().find('.fas').addClass('fa-caret-up');
 				$(this).find('td').first().find('.fas').removeClass('fa-caret-down');
 				var target = $(this).data('target');
-				$('#target' + target).fadeIn();
+				if(checkExplorer()) 
+					$('#target' + target).show();
+				else
+					$('#target' + target).fadeIn();
 			}
 		});
 		

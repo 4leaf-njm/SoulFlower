@@ -1,4 +1,4 @@
-package com.dawn.soul.controller.admin;
+package com.dawn.soul.controller.m.admin;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -40,8 +40,8 @@ import com.dawn.soul.service.SalesService;
 import com.dawn.soul.util.AuthUtil;
 
 @Controller
-@RequestMapping("/admin")
-public class AdminController {
+@RequestMapping("/m/admin")
+public class AdminControllerM {
 
 	@Autowired
 	private AdminService adminService;
@@ -63,7 +63,7 @@ public class AdminController {
 	
 	@RequestMapping(value="/login.do", method=RequestMethod.GET)
 	public String login(@ModelAttribute("msg") String msg) {
-		return "admin/login";
+		return "mobile/admin/login";
 	}
 	
 	@RequestMapping(value="/login.do", method=RequestMethod.POST)
@@ -72,11 +72,11 @@ public class AdminController {
 		if(result == -1) {
 			model.addAttribute("msg", "아이디가 존재하지 않습니다.");
 			model.addAttribute("admin", admin);
-			return "admin/login";
+			return "mobile/admin/login";
 		} else if (result == 0) {
 			model.addAttribute("msg", "비밀번호가 일치하지 않습니다.");
 			model.addAttribute("admin", admin);
-			return "admin/login";
+			return "mobile/admin/login";
 		} else if (result == 1){
 			AdminVO loginUser = adminService.getAdminById(admin.getAdminId()); 
 			session.setAttribute("loginUser", loginUser);
@@ -84,7 +84,7 @@ public class AdminController {
 		} else {
 			model.addAttribute("msg", "관리자 승인이 필요합니다.");
 			model.addAttribute("admin", admin);
-			return "admin/login";
+			return "mobile/admin/login";
 		} 
 	}
 	
@@ -97,7 +97,7 @@ public class AdminController {
 	
 	@RequestMapping(value="/join.do", method=RequestMethod.GET)
 	public String join() {
-		return "admin/join";
+		return "mobile/admin/join";
 	}
 	
 	@RequestMapping(value="/join.do", method=RequestMethod.POST)
@@ -110,7 +110,7 @@ public class AdminController {
 		} else {
 			model.addAttribute("msg", "중복된 아이디입니다.");
 			model.addAttribute("admin", admin);
-			return "admin/join";
+			return "mobile/admin/join";
 		}
 		
 	}
@@ -220,7 +220,7 @@ public class AdminController {
 		model.addAttribute("totalRebate", totalRebate);
 		model.addAttribute("totalRealProfit", totalProfit - totalRebate);
 		
-		return "admin/main";
+		return "mobile/admin/main";
 	}
 	
 	@RequestMapping(value="/register.do", method=RequestMethod.GET)
@@ -238,7 +238,7 @@ public class AdminController {
 		model.addAttribute("companyList", companyList);
 		model.addAttribute("itemList", itemList);
 		
-		return "admin/register";
+		return "mobile/admin/register";
 	}
 	
 	@RequestMapping(value="/register.do", method=RequestMethod.POST)
@@ -246,7 +246,8 @@ public class AdminController {
 			               RedirectAttributes rttr) throws SQLException {
 		AdminVO loginUser = (AdminVO) session.getAttribute("loginUser");
 		salesService.insertSales(loginUser, sales, salesList.getSalesList());
-		rttr.addAttribute("menu_code", menu_code.split(",")[0]);
+		
+		rttr.addAttribute("menu_code", menu_code);
 		rttr.addFlashAttribute("msg", "등록이 완료되었습니다.");
 		return "redirect:register.do";
 	}
@@ -255,7 +256,10 @@ public class AdminController {
 	public String modifySales(String menu_code, SalesVO sales, SalesListRequest salesList, HttpSession session, 
 			               RedirectAttributes rttr) throws SQLException {
 		AdminVO loginUser = (AdminVO) session.getAttribute("loginUser");
+		System.out.println(sales);
+		System.out.println(salesList);
 		salesService.modifySales(loginUser, sales, salesList.getSalesList());
+		
 		rttr.addAttribute("menu_code", menu_code);
 		rttr.addFlashAttribute("msg", "변경이 완료되었습니다.");
 		return "redirect:register.do";
@@ -417,7 +421,7 @@ public class AdminController {
 		model.addAttribute("totalRebate", totalRebate);
 		model.addAttribute("totalRealProfit", totalProfit - totalRebate);
 		
-		return "admin/main";
+		return "mobile/admin/main";
 	}
 	
 	@ResponseBody

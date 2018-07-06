@@ -4,7 +4,7 @@
 	position: relative;
 	width: 100%;
 	height: 100%;
-	background: #d5ebf66b;
+	background: #edf7fb;
 }
 
 .login {
@@ -121,21 +121,31 @@
 	border-left: 1px solid #dedede;
 }
 .step01 .sel_area {
+	overflow-y: scroll;
 	padding: 10px;
     width: 150px;
     height: 250px;
     text-align: center;
     border: 1px solid #dedede;
-    outline: none;
 }
 
-.step01 .sel_area option {
-	margin: 5px 0;
-	padding: 5px 0;
+.step01 .sel_area ul {
+	height: 100%;	
 }
 
-.step01 .sel_area option:hover {
+.step01 .sel_area li {
+	margin: 3px 0;
+	padding: 7px 0;
+	font-size: 12px;
+}
+
+.step01 .sel_area li:hover {
 	background: #f5f5f5;	
+	cursor: pointer;
+}
+
+.step01 .sel_area li.on {
+	background: #e7e7e7;
 }
 
 .step02 {
@@ -729,10 +739,24 @@
 .sales_list .outer > tbody > tr > th .hide_box {
     position: absolute;
 	display: none;
-    padding: 5px 0;
     width: 140px;
+    height: 501px;
+    background: none;
+}
+
+.sales_list .outer > tbody > tr > th .hide_box > div {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    max-height: 501px;
     background: #fdfdfd;
     border: 1px solid #dedede;
+}
+
+.sales_list .outer > tbody > tr > th .hide_box > div > div {
+    overflow-y: scroll;
+    padding: 5px 0 0;
+    max-height: 472px;
 }
 
 .sales_list .outer > tbody > tr > th .hide_box label {
@@ -750,8 +774,8 @@
 
 .sales_list .outer > tbody > tr > th .hide_box .btn-sm {
     display: inline-block;
-    margin: 3px 1px 2px;
-    padding: 3px 3px;
+    margin: 5px 0;
+    padding: 3px;
     font-size: 10px;
     background: #efefef;
     border: 1px solid #c7c7c7;
@@ -759,13 +783,13 @@
 }
 
 .sales_list .outer > tbody > tr > th .comp_box {
-    top: 31px;
+    top: -501px;
     left: -0.5px;
 }
 
 .sales_list .outer > tbody > tr > th .item_box {
-    top: 31px;
-    right: -1.5px;
+    top: -501px;
+    right: -0.5px;
 }
 
 .sales_list .outer > tbody > tr > td {
@@ -788,18 +812,19 @@
 
 .sales_list .inner_tit {
     padding: 5px 0 15px 5px;
-    text-align: left;
+    text-align: center;
     font-size: 12px;
     color: #ff6b6b;
 }
 	
 .sales_list .inner {
+	margin: 0 auto;
     border-top: 2px solid #b7b7b7;
     border-bottom: 2px solid #b7b7b7;
 }
 
 .sales_list .inner tr.tr_info th {
-	padding: 10px 35px;
+	padding: 10px 90px;
     background: #f5f5f5;
 }
 

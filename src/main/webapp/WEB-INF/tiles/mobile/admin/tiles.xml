@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+	<definition name="adminLayoutM" template="/WEB-INF/tiles/mobile/admin/layouts/layout.jsp">
+		<put-attribute name="header" value="/WEB-INF/tiles/mobile/admin/components/header.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/tiles/mobile/admin/components/footer.jsp" />
+	</definition>
+
+	<definition name="emptyLayoutM" template="/WEB-INF/tiles/mobile/admin/layouts/empty.jsp">
+		<put-attribute name="content" value="" />
+	</definition>
+	
+	<definition name="mobile/admin/login" extends="emptyLayoutM">
+		<put-attribute name="content" value="/WEB-INF/views/mobile/admin/login.jsp" />
+	</definition>
+
+	<definition name="mobile/admin/join" extends="emptyLayoutM">
+		<put-attribute name="content" value="/WEB-INF/views/mobile/admin/join.jsp" />
+	</definition>
+
+	<definition name="mobile/admin/main" extends="adminLayoutM">
+		<put-attribute name="content" value="/WEB-INF/views/mobile/admin/main.jsp" />
+	</definition>
+
+	<definition name="mobile/admin/register" extends="adminLayoutM">
+		<put-attribute name="content" value="/WEB-INF/views/mobile/admin/register.jsp" />
+	</definition>
+
+	<definition name="mobile/admin/area" extends="adminLayoutM">
+		<put-attribute name="content" value="/WEB-INF/views/mobile/admin/area.jsp" />
+	</definition>
+	
+	<definition name="mobile/admin/company" extends="adminLayoutM">
+		<put-attribute name="content" value="/WEB-INF/views/mobile/admin/company.jsp" />
+	</definition>
+	
+	<definition name="mobile/admin/item" extends="adminLayoutM">
+		<put-attribute name="content" value="/WEB-INF/views/mobile/admin/item.jsp" />
+	</definition>
+	
+	<definition name="mobile/admin/account" extends="adminLayoutM">
+		<put-attribute name="content" value="/WEB-INF/views/mobile/admin/account.jsp" />
+	</definition>
+	
+	<definition name="mobile/admin/work_history" extends="adminLayoutM">
+		<put-attribute name="content" value="/WEB-INF/views/mobile/admin/work_history.jsp" />
+	</definition>
+	
+</tiles-definitions>

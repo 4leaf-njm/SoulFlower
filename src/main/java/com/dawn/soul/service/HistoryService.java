@@ -17,4 +17,5 @@ public interface HistoryService {
 	
 	void removeHistory(int historyNo) throws SQLException;
 	
+	List<HistoryVO> getSearchHistory(String type, String date) throws SQLException;
 }

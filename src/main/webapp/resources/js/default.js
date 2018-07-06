@@ -12,4 +12,12 @@ function comma(num){
     return str;
 }
 
+function checkExplorer() {
+	var agent = navigator.userAgent.toLowerCase(); 
+	if (agent.indexOf("msie") > -1 || agent.indexOf("trident") > -1) 
+		return true;
+	else
+		return false;
+}
+
 $('.scrollbar-outer, .scrollbar-dynamic').scrollbar();

@@ -1,7 +1,9 @@
 package com.dawn.soul.service.impl;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,14 @@ public class HistoryServiceImpl implements HistoryService {
 	@Override
 	public void removeHistory(int historyNo) throws SQLException {
 		historyDAO.deleteHistory(historyNo);
+	}
+
+	@Override
+	public List<HistoryVO> getSearchHistory(String type, String date) throws SQLException {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("type", type);
+		params.put("date", date);
+		return historyDAO.selectSearchHistory(params);
 	}
 
 }

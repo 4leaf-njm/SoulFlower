@@ -48,4 +48,26 @@
 		WHERE 
 			HISTORY_NO = #{historyNo}
 	</delete>
+	
+	<select id="selectSearchHistory" parameterType="hashmap" resultMap="historyMap">
+		SELECT
+			*
+		FROM 
+			HISTORY
+		WHERE
+			1 = 1
+		<if test="type != '' and type != null and date != null">
+			<if test="type == 'year'">
+				AND DATE_FORMAT(HISTORY_DATE, '%Y') = #{date}
+			</if>
+			<if test="type == 'month'">
+				AND DATE_FORMAT(HISTORY_DATE, '%Y-%m') = #{date}
+			</if>
+			<if test="type == 'daily'">
+				AND DATE_FORMAT(HISTORY_DATE, '%Y-%m-%d') = #{date}
+			</if>
+		</if>
+		ORDER BY
+			HISTORY_DATE DESC
+	</select>
 </mapper>

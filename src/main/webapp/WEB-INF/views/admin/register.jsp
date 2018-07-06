@@ -6,16 +6,20 @@
 	<div class="content">
 		<div style="font-size: 0;">
 			<form method="post" name="frm_reg">
+				<input type="hidden" name="menu_code" value="${menu_code }" />
 				<input type="hidden" name="salesNo" value="0" />
 				<div class="section step01">
 					<h3><span class="txt_step">STEP 01</span>지역 선택</h3>
 					<div class="scrollbar-outer" style="width: 150px; height: 250px; margin: 0 auto;">
-						<select id="areaName" class="sel_area" name="areaName" size="6" onchange="">
-							<option value="" selected>-----------</option>
-							<c:forEach var="area" items="${areaList }">
-								<option value="${area.areaName}">${area.areaName}</option>
-							</c:forEach>
-						</select>
+						<input type="hidden" name="areaName" id="areaName" />
+						<div class="sel_area">
+							<ul>
+								<li class="on" data-val="">- - - -</li>
+								<c:forEach var="area" items="${areaList }">
+									<li data-val="${area.areaName}">${area.areaName}</li>
+								</c:forEach>
+							</ul>
+						</div>
 					</div>
 				</div>
 				<div class="section step02">
@@ -95,7 +99,7 @@
 									<td>
 										<input type="number" name="amount" min="1" value="1" class="txt_amount"/>
 									</td>
-									<td style="padding-right: 22px; border-right: 2px solid #adadad;">
+									<td style="padding-right: 15px; border-right: 2px solid #adadad;">
 										<div style="display: inline-block;">
 											<label class="lbl_rebate"><input type="radio" name="rd_rebate${status.count }" class="rd_rebate" value="per" checked="checked"/>비율</label>
 											<label class="lbl_rebate"><input type="radio" name="rd_rebate${status.count }" class="rd_rebate" value="self"/>직접입력</label>
@@ -254,8 +258,8 @@
 				result01 = price - rebate;
 				result02 = rebate;
 			}
-			$parent.find('.result01').text(comma(result01) + ' 원');
-			$parent.find('.result02').text(comma(result02) + ' 원');
+			$parent.find('.result01').text(comma(parseInt(result01)) + ' 원');
+			$parent.find('.result02').text(comma(parseInt(result02)) + ' 원');
 			$parent.find('.btn_reg').addClass('on');
 		});
 		
@@ -278,7 +282,6 @@
 				var no = parseInt($('.itemHide:last').attr('id').replace('itemHide', '')) + 1;
 				count = no;
 			}
-				
 			var $parent = $(this).parents('tr');
 			var itemName = $parent.find('.sel_item').val();
 			var amount = $parent.find('.txt_amount').val();
@@ -305,7 +308,6 @@
 			html += '	<input type="hidden" name="rebate" value="' + rebate + '" />'
 			html += '</div>';
 			$('.item_final').append(html);
-			count ++;
 		});
 	}
 	$('.btn_addItem').click(function(event){
@@ -369,9 +371,9 @@
 		day = day.length == 1 ? '0' + day : day;
 		date += '-' + day;
 		
-		if(frm.areaName.value == '') {
+		var areaName = $('.sel_area li.on').data('val');
+		if(areaName == '') {
 			alert('지역을 선택해주세요.');
-			frm.areaName.focus();
 			return;
 		} else if (date.length != 10) {
 			alert('날짜를 선택해주세요.');
@@ -410,6 +412,7 @@
 		}
 		if(!result) return;
 		frm.salesDate.value = date;
+		frm.areaName.value = areaName;
 		renameForItem();
 		frm.submit();
 	});
@@ -419,7 +422,8 @@
 		
 		$(this).css('display', 'none');
 		$('.btn_final').text('영업 등록');
-		$('.sel_area').val('').prop('selected', true);
+		$('.sel_area li').removeClass('on');
+		$('.sel_area li').eq(0).addClass('on');
 		$('.sel_comp').val('').prop('selected', true);
 		$('#funeral').val('');
 		$('#deadName').val('');
@@ -465,4 +469,9 @@
 	        $(this).find("input[name=rebate]").attr("name", "salesList[" + index + "].rebate");
 	    });
 	}
+	
+	$('.sel_area li').click(function(){
+		$('.sel_area li').removeClass('on');
+		$(this).addClass('on');
+	});
 </script>

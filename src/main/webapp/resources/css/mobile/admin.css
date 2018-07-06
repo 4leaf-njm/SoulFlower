@@ -1,0 +1,95 @@
+@CHARSET "UTF-8";
+
+.login_wrap {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	background: #edf7fb;
+}
+
+.login {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -145px;
+	margin-left: -153px;
+	padding: 25px 25px 35px;
+	background: #fff;
+	border: 2px solid #eaeaea;
+	box-shadow: 3px 3px 3px #b6b5b5;
+}
+
+.login .title {
+	position: relative;
+	top: 7px;
+	padding: 0 0 22px;
+	text-align: center;
+	font-size: 25px;	
+}
+
+.login input {
+	display: block;
+	margin: 7px 0;
+	padding: 0 17px;
+	width: 306px;
+	height: 34px;
+	line-height: 34px;
+	border: 1px solid #b9babd;
+	background: #fff;
+	color: #b0b0b0;
+	font-size: 15px;
+}
+
+.login .btn_login {
+	display: block;
+	overflow: hidden;
+	margin-top: 15px; width : 306px;
+	height: 43px;
+	background: url(../images/commons/btn-login.gif) no-repeat 0 0;
+	font-size: 0;
+	line-height: 0;
+	vertical-align: top;
+	border: none;
+	width: 306px;
+	cursor: pointer;
+}
+
+.login .btn_join {
+	display: block;
+	overflow: hidden;
+	margin-top: 15px; width : 306px;
+	height: 43px;
+	background: url(../images/commons/btn-join.gif) no-repeat 0 0;
+	font-size: 0;
+	line-height: 0;
+	vertical-align: top;
+	border: none;
+	width: 306px;
+	cursor: pointer;
+}
+
+.login .go_join {
+	position: relative;
+    margin: 20px 0 0;
+    font-weight: 600;
+    color: #d81818;
+}
+
+.login .go_join .fas {
+	position: relative;
+    top: 1px;
+    padding-right: 5px;
+    font-size: 16px;
+    color: #ff6161;
+}
+
+.login .go_join .btn_gojoin {
+	position: absolute;
+    top: -1px;
+    right: 0;
+    padding: 4px 5px;
+    font-size: 11px;
+    font-weight: bold;
+    border: 1px solid #737373;
+    border-radius: 5px;
+}

@@ -149,13 +149,16 @@ function clickCompany(salesNo) {
 			$('.btn_final').text('영업 수정');
 			$('.btn_mod').css('display', 'inline-block');
 			$.each(data, function(key, value) {
-				$('.sel_area').val(getValue(key, 'areaName')).prop('selected', true);
 				$('.sel_comp').val(getValue(key, 'companyName')).prop('selected', true);
 				$('#funeral').val(getValue(key, 'funeral'));
 				$('#deadName').val(getValue(key, 'deadName'));
 				$('#hosil').val(getValue(key, 'hosil'));
 				$('#leader').val(getValue(key, 'leader'));
-				
+				$('.sel_area li').removeClass('on');
+				$.each($('.sel_area li'), function (i, v) {
+					if($(this).data('val') == getValue(key, 'areaName'))
+						$(this).addClass('on');
+				});
 				var html = '';
 				var count = 1;
 				$('.item_final').html('');

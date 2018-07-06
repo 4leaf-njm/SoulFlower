@@ -2,6 +2,7 @@ package com.dawn.soul.dao.impl;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,11 @@ public class HistoryDAOImpl implements HistoryDAO {
 	@Override
 	public void deleteHistory(int historyNo) throws SQLException {
 		sqlSession.delete(NAMESPACE + ".deleteHistory", historyNo);
+	}
+
+	@Override
+	public List<HistoryVO> selectSearchHistory(Map<String, Object> params) throws SQLException {
+		return sqlSession.selectList(NAMESPACE + ".selectSearchHistory", params);
 	}
 
 }

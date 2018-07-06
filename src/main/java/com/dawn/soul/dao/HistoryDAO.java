@@ -2,6 +2,7 @@ package com.dawn.soul.dao;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import com.dawn.soul.domain.HistoryVO;
 
@@ -16,4 +17,6 @@ public interface HistoryDAO {
 	void updateHistory(HistoryVO history) throws SQLException;
 
 	void deleteHistory(int historyNo) throws SQLException;
+	
+	List<HistoryVO> selectSearchHistory(Map<String, Object> params) throws SQLException;
 }

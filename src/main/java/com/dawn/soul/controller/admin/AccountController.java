@@ -47,7 +47,7 @@ public class AccountController {
 		AdminVO loginUser = (AdminVO) session.getAttribute("loginUser");
 		if(!authUtil.hasRole(loginUser.getAdminId(), "ROLE_ACCOUNT_VIEW")) {
 			rttr.addAttribute("menu_code", "01");
-			rttr.addFlashAttribute("msg", "권한이 없습니다.");
+			rttr.addFlashAttribute("msg", "접근 권한이 없습니다.");
 			return "redirect:main.do";
 		}
 		Map<String, Object> authMap = new HashMap<String, Object>();
