@@ -35,10 +35,12 @@ public class AreaController {
 	private AuthUtil authUtil;
 	
 	@RequestMapping(value="/area.do", method=RequestMethod.GET)
-	public String area(@ModelAttribute("menu_code") String menu_code, Model model, HttpSession session) throws SQLException {
+	public String area(@ModelAttribute("menu_code") String menu_code, Model model, HttpSession session, RedirectAttributes rttr) throws SQLException {
 		AdminVO loginUser = (AdminVO) session.getAttribute("loginUser");
 		if(!authUtil.hasRole(loginUser.getAdminId(), "ROLE_SETTING_VIEW")) {
-			model.addAttribute("auth", "N");
+			rttr.addAttribute("menu_code", "01");
+			rttr.addFlashAttribute("msg", "접근 권한이 없습니다.");
+			return "redirect:main.do";
 		}
 		List<AreaVO> areaList = areaService.getAreaList(); 
 		

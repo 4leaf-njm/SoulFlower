@@ -108,6 +108,7 @@ function clickEvent() {
 		getSalesByDate(date);
 		$('#kCalendar td').removeClass('on');
 		$(this).addClass('on');
+		resetForm();
 	});
 }
 
@@ -132,7 +133,7 @@ function getSalesByDate(date) {
 			$target.find('.list').html(html);
 		},
 		error: function() {
-			alert('error');
+			console.log('error');
 		}
 	});
 }
@@ -164,28 +165,34 @@ function clickCompany(salesNo) {
 				$('.item_final').html('');
 				html += '<table><tbody>';
 				html += '	<tr>';
-				html += '		<th width="40">번호</th>';      
-				html += '		<th width="*">품목</th>';       
-				html += '		<th width="40">수량</th>';      
-				html += '		<th width="105">수익</th>';     
-				html += '		<th width="105">리베이트</th>';  
-				html += '		<th width="60"></th>';        
+				html += '       <th width="40">번호</th>';
+				html += '       <th width="*">품목</th>';
+				html += '       <th width="80">가격</th>';
+				html += '       <th width="60">수량</th>';
+				html += '       <th width="80">리베이트</th>';
+				html += '       <th width="80">수익</th>';
+				html += '       <th width="40"></th>';
 				html += '	</tr>';
 			    html += '</tbody></table>';
 				$('.item_final').html(html);
 				$.each(value, function(idx, val) {
 					var itemName = val.itemName;
+					var itemPrice = val.itemPrice;
 					var amount = val.amount;
-					var profit = val.profit;
 					var rebate = val.rebate;
+					var rebateType = val.rebateType;
+					var rebateNum = val.rebateNum;
+					var profit = val.profit;
 					
 					html = '';
 					html += '<tr>'
 					html += '	<td>' + count + '</td>'
 					html += '	<td>' + itemName + '</td>'
-					html += '	<td>' + amount + '</td>'
-					html += '	<td>' + comma(profit) + ' 원</td>'
+					html += '	<td>' + comma(itemPrice) + ' 원</td>'
+					html += '	<td><input type="text" class="txt_updateAmount" value="' + amount + '" style="width: 30px; padding: 2px 3px; border: 1px solid #dedede; font-size: 11px; text-align: center;"/>';
+					html += '       <a href="#" class="btn_updateAmount"><i class="fas fa-check" style="padding: 0 0 0 3px; color: #ff5959; font-size: 10px;"></i></a></td>';
 					html += '	<td>' + comma(rebate) + ' 원</td>'
+					html += '	<td>' + comma(profit) + ' 원</td>'
 					html += '	<td><a href="#" class="btn_remove">삭제</a></td>'
 					html += '</tr>'
 					$('.item_final table tbody').append(html);
@@ -194,17 +201,21 @@ function clickCompany(salesNo) {
 					html = '';
 					html += '<div id="itemHide' + count + '" class="itemHide">';
 					html += '	<input type="hidden" name="itemName" value="' + itemName + '" />'
+					html += '	<input type="hidden" name="itemPrice" value="' + itemPrice + '" />'
 					html += '	<input type="hidden" name="amount" value="' + amount + '" />'
-					html += '	<input type="hidden" name="profit" value="' + profit + '" />'
 					html += '	<input type="hidden" name="rebate" value="' + rebate + '" />'
+					html += '	<input type="hidden" name="rebateType" value="' + rebateType + '" />'
+					html += '	<input type="hidden" name="rebateNum" value="' + rebateNum + '" />'
+					html += '	<input type="hidden" name="profit" value="' + profit + '" />'
 					html += '</div>';
 					$('.item_final').append(html);
 					count ++;
 				});
-			})
+			});
+			updateAmountClick();
 		},
 		error: function() {
-			alert('error');
+			console.log('error');
 		}
 	});
 }

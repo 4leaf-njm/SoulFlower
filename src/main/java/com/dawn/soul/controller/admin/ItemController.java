@@ -36,10 +36,12 @@ public class ItemController {
 	private AuthUtil authUtil;
 	
 	@RequestMapping(value="/item.do", method=RequestMethod.GET)
-	public String item(@ModelAttribute("menu_code") String menu_code, Model model, HttpSession session) throws SQLException {
+	public String item(@ModelAttribute("menu_code") String menu_code, Model model, HttpSession session, RedirectAttributes rttr) throws SQLException {
 		AdminVO loginUser = (AdminVO) session.getAttribute("loginUser");
 		if(!authUtil.hasRole(loginUser.getAdminId(), "ROLE_SETTING_VIEW")) {
-			model.addAttribute("auth", "N");
+			rttr.addAttribute("menu_code", "01");
+			rttr.addFlashAttribute("msg", "접근 권한이 없습니다.");
+			return "redirect:main.do";
 		}
 		List<ItemVO> itemList = itemService.getItemList(); 
 		
@@ -69,7 +71,7 @@ public class ItemController {
 		ItemVO item = itemService.getItemById(itemNo);
 		itemService.removeItem(itemNo);
 		
-		String text = loginUser.getAdminName() + " (" + loginUser.getAdminId() + ") 님이 " + "품목 관리에서 " + item.getItemName() + "을(를) 추가했습니다.";
+		String text = loginUser.getAdminName() + " (" + loginUser.getAdminId() + ") 님이 " + "품목 관리에서 " + item.getItemName() + "을(를) 삭제했습니다.";
 		HistoryVO history = new HistoryVO();
 		history.setHistoryText(text);
 		historyService.insertHistory(history);

@@ -29,9 +29,16 @@
 			<div class="area">
 				<h2 class="title">지역별 매출</h2>
 				<div class="select scrollbar-outer">
-					<c:forEach var="area" items="${areaList }">
-						<label><input type="checkbox" name="area" value="${area }"/>${area }</label>
-					</c:forEach>
+					<c:choose>
+					<c:when test="${empty areaList }">
+						<span style="display: inline-block; margin: 105px 0 0 15px; line-height: 150%; color: #ff5a5a; font-size: 11px; text-align: center;">영업을<br/>등록해주세요.</span>
+					</c:when>
+					<c:otherwise>
+						<c:forEach var="area" items="${areaList }">
+							<label><input type="checkbox" name="area" value="${area }"/>${area }</label>
+						</c:forEach>
+					</c:otherwise>
+					</c:choose>
 				</div>
 			</div>
 			<form action="searchSale.do" method="post" name="frm_search">
@@ -121,41 +128,45 @@
 								<p class="inner_tit">* ${dataMap.key } 매출 상세정보</p>
 								<table class="inner">
 									<tr class="tr_info">
-										<th>일자</th>
+										<th style="padding: 10px 50px;">일자</th>
+										<th>지역</th>
+										<th>팀장명</th>
 										<th>장례식장</th>
 										<th>고인명</th>
 										<th>호실</th>
-										<th>팀장명</th>
 									</tr>
 									<c:forEach var="sales" items="${dataMap.value.salesList }">
 										<tr class="tr_info">
 											<td>${sales.salesDate }</td>
+											<td>${sales.areaName }</td>
+											<td>${sales.leader }</td>
 											<td>${sales.funeral }</td>
 											<td>${sales.deadName }</td>
 											<td>${sales.hosil }</td>
-											<td>${sales.leader }</td>
 										</tr>
 										<tr class="tr_item">
 											<th></th>
 											<th>품목</th>
+											<th>가격</th>
 											<th>수량</th>
-											<th>수익</th>
 											<th>리베이트</th>
+											<th>수익</th>
 										</tr>
 										<c:forEach var="det" items="${dataMap.value.salesDetMap[sales.salesNo] }">
 											<tr class="tr_item">
 												<td></td>
 												<td>${det.itemName }</td>
+												<td><fmt:formatNumber value="${det.itemPrice }" pattern="#,##0" /></td>
 												<td>${det.amount }</td>
-												<td><fmt:formatNumber value="${det.profit }" pattern="#,##0" /></td>
 												<td><fmt:formatNumber value="${det.rebate }" pattern="#,##0" /></td>
+												<td><fmt:formatNumber value="${det.profit }" pattern="#,##0" /></td>
 											</tr>
 										</c:forEach>
 									</c:forEach>
 									<tr>
-										<td colspan="5" class="inner_res">
+										<td colspan="6" class="inner_res">
 											매출 <fmt:formatNumber value="${dataMap.value.profit }" pattern="#,##0" /> 원&nbsp;&nbsp;&nbsp;
-											리베이트<fmt:formatNumber value="${dataMap.value.rebate }" pattern="#,##0" /> 원&nbsp;&nbsp;&nbsp;
+											리베이트 <fmt:formatNumber value="${dataMap.value.rebate }" pattern="#,##0" /> 원&nbsp;&nbsp;&nbsp;
 											순수익 <fmt:formatNumber value="${dataMap.value.realProfit }" pattern="#,##0" /> 원
 										</td>
 									</tr>
@@ -169,9 +180,9 @@
 			<c:if test="${!empty itemCheckList and !empty salesDataMap and auth ne 'N'}">
 				<div class="sales_res">
 					<h3 class="res">
-						총 매출<span class="sale_money"><fmt:formatNumber value="${totalProfit }" pattern="#,##0" /></span>&nbsp;-&nbsp;
+						총 매출<span class="sale_money"><fmt:formatNumber value="${totalPrice }" pattern="#,##0" /></span>&nbsp;-&nbsp;
 						리베이트<span class="sale_money"><fmt:formatNumber value="${totalRebate }" pattern="#,##0" /></span>&nbsp;=&nbsp;
-						순 수익<span class="sale_money"><fmt:formatNumber value="${totalRealProfit }" pattern="#,##0" /></span>
+						순 수익<span class="sale_money"><fmt:formatNumber value="${totalProfit }" pattern="#,##0" /></span>
 					</h3>
 				</div>
 			</c:if>

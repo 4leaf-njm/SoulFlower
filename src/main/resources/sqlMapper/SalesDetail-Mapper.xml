@@ -4,9 +4,12 @@
 	<resultMap type="sales_detail" id="salesDetailMap">
 		<id property="salesDetNo" column="sales_det_no" />
 		<result property="itemName" column="item_name" />
+		<result property="itemPrice" column="item_price" />
 		<result property="amount" column="amount" />
 		<result property="profit" column="profit" />
 		<result property="rebate" column="rebate" />
+		<result property="rebateType" column="rebate_type" />
+		<result property="rebateNum" column="rebate_num" />
 		<result property="salesNo" column="sales_no" />
 	</resultMap>
 	
@@ -38,15 +41,21 @@
 	<insert id="insertSalesDet" parameterType="sales_detail">
 		INSERT INTO SALES_DETAIL (
 			   ITEM_NAME
+			  ,ITEM_PRICE
 			  ,AMOUNT
 			  ,PROFIT
 			  ,REBATE
+			  ,REBATE_TYPE
+			  ,REBATE_NUM
 			  ,SALES_NO
 		) VALUES (
 			   #{itemName}
+			  ,#{itemPrice}
 			  ,#{amount}
 			  ,#{profit}
 			  ,#{rebate}
+			  ,#{rebateType}
+			  ,#{rebateNum}
 			  ,#{salesNo}
 		)
 	</insert>
@@ -56,9 +65,12 @@
 			SALES_DETAIL
 		SET
 			  ITEM_NAME = #{itemName}
+			 ,ITEM_PRICE = #{itemPrice}
 			 ,AMOUNT = #{amount} 
 			 ,PROFIT = #{profit}
 			 ,REBATE = #{rebate}
+			 ,REBATE_TYPE = #{rebateType}
+			 ,REBATE_NUM = #{rebateNum}
 			 ,SALES_NO = #{salesNo}
 		WHERE 
 			SALES_DET_NO = #{salesDetNo}

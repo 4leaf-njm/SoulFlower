@@ -47,6 +47,12 @@
 					<div class="input_box">
 						<div class="row">
 							<div class="col-lg">
+								<label for="leader">팀장명</label>
+								<input type="text" name="leader" id="leader" />
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-lg">
 								<label for="funeral">장례식장</label>
 								<input type="text" name="funeral" id="funeral" />
 							</div>
@@ -61,12 +67,6 @@
 								<input type="text" name="hosil" id="hosil" />
 							</div>
 						</div>
-						<div class="row">
-							<div class="col-lg">
-								<label for="leader">팀장명</label>
-								<input type="text" name="leader" id="leader" />
-							</div>
-						</div>
 					</div>
 				</div>
 				<div class="section step05">
@@ -78,8 +78,8 @@
 								<th>가격</th>
 								<th>수량</th>
 								<th>리베이트 설정</th>
-								<th width="65px">수익</th>
 								<th width="65px">리베이트</th>
+								<th width="65px">수익</th>
 								<th></th>
 								<th></th>
 							</tr>
@@ -129,10 +129,11 @@
 							<tr>
 								<th width="40">번호</th>
 								<th width="*">품목</th>
-								<th width="40">수량</th>
-								<th width="105">수익</th>
-								<th width="105">리베이트</th>
-								<th width="60"></th>
+								<th width="80">가격</th>
+								<th width="60">수량</th>
+								<th width="80">리베이트</th>
+								<th width="80">수익</th>
+								<th width="40"></th>
 							</tr>
 						</table>
 					</div>
@@ -167,23 +168,8 @@
 	function itemEvent() {
 		$('.sel_item').change(function(){
 			var $parent = $(this).parents('tr');
-			var val = $(this).find('option:selected').data('no');
-			if(val != '') {
-				$.ajax({
-					url: 'ajaxGetItem.do',
-					type: 'post',
-					dataType: 'json',
-					data: {'no': val},
-					success: function(data) {
-						$parent.find('.txt_price').val(data.itemPrice);
-					}, 
-					error: function() {
-						alert('error');
-					}
-				});
-			} else {
-				$parent.find('.txt_price').val('');
-			}
+			$parent.find('.txt_price').val('');
+			$parent.find('.btn_reg').removeClass('on');
 		});
 		
 		$('.rd_rebate').change(function(){
@@ -252,11 +238,11 @@
 			var result01;
 			var result02;
 			if($parent.find('.rd_rebate:checked').val() == 'per') {
-				result01 = price - (price * rebate / 100);
-				result02 = price * rebate / 100;
+				result01 = price * rebate / 100;
+				result02 = price - (price * rebate / 100);
 			} else if ($parent.find('.rd_rebate:checked').val() == 'self') {
-				result01 = price - rebate;
-				result02 = rebate;
+				result01 = rebate;
+				result02 = price - rebate;
 			}
 			$parent.find('.result01').text(comma(parseInt(result01)) + ' 원');
 			$parent.find('.result02').text(comma(parseInt(result02)) + ' 원');
@@ -284,17 +270,22 @@
 			}
 			var $parent = $(this).parents('tr');
 			var itemName = $parent.find('.sel_item').val();
+			var itemPrice = $parent.find('.txt_price').val();
 			var amount = $parent.find('.txt_amount').val();
-			var profit = $parent.find('.result01').text().replace(' 원', '').replace(',', '');
-			var rebate = $parent.find('.result02').text().replace(' 원', '').replace(',', '');
+			var rebateType = $parent.find('input:radio[class=rd_rebate]:checked').val();
+			var rebateNum = $parent.find('.txt_rebate').val();
+			var rebate = $parent.find('.result01').text().replace(' 원', '').replace(/,/gi, '');
+			var profit = $parent.find('.result02').text().replace(' 원', '').replace(/,/gi, '');
 			
 			var html = '';
 			html += '<tr>'
 			html += '	<td>' + count + '</td>'
 			html += '	<td>' + itemName + '</td>'
-			html += '	<td>' + amount + '</td>'
-			html += '	<td>' + comma(profit) + ' 원</td>'
+			html += '	<td>' + comma(itemPrice) + ' 원</td>'
+			html += '	<td><input type="text" class="txt_updateAmount" value="' + amount + '" style="width: 30px; padding: 2px 3px; border: 1px solid #dedede; font-size: 11px; text-align: center;"/>';
+			html += '       <a href="#" class="btn_updateAmount"><i class="fas fa-check" style="padding: 0 0 0 3px; color: #ff5959; font-size: 10px;"></i></a></td>';
 			html += '	<td>' + comma(rebate) + ' 원</td>'
+			html += '	<td>' + comma(profit) + ' 원</td>'
 			html += '	<td><a href="#" class="btn_remove">삭제</a></td>'
 			html += '</tr>'
 			$('.item_final table').append(html);
@@ -303,13 +294,51 @@
 			html = '';
 			html += '<div id="itemHide' + count + '" class="itemHide">';
 			html += '	<input type="hidden" name="itemName" value="' + itemName + '" />'
+			html += '	<input type="hidden" name="itemPrice" value="' + itemPrice + '" />'
 			html += '	<input type="hidden" name="amount" value="' + amount + '" />'
-			html += '	<input type="hidden" name="profit" value="' + profit + '" />'
 			html += '	<input type="hidden" name="rebate" value="' + rebate + '" />'
+			html += '	<input type="hidden" name="rebateType" value="' + rebateType + '" />'
+			html += '	<input type="hidden" name="rebateNum" value="' + rebateNum + '" />'
+			html += '	<input type="hidden" name="profit" value="' + profit + '" />'
 			html += '</div>';
 			$('.item_final').append(html);
+			updateAmountClick();
 		});
 	}
+	
+	function updateAmountClick() {
+		$('.btn_updateAmount').click(function(event) {
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			
+			if($('.txt_updateAmount').val() == '') {
+				alert('수량을 입력해주세요.');
+				$('.txt_updateAmount').focus();
+				return;
+			}
+			var $parent = $(this).parents('tr');
+			var no = $parent.find('td').eq(0).text();
+			var amount = parseInt($parent.find('.txt_updateAmount').val());
+			var itemPrice = parseInt($parent.find('td').eq(2).text().replace(' 원', '').replace(/,/gi, ''));
+			var rebateType = $('#itemHide' + no).find('input[name=rebateType]').val();
+			var rebateNum = parseInt($('#itemHide' + no).find('input[name=rebateNum]').val());
+			var rebate;
+			var profit;
+			if(rebateType == 'per') {
+				rebate = (itemPrice * amount) * (rebateNum / 100);
+				profit = (itemPrice * amount) - ((itemPrice * amount) * (rebateNum / 100));
+			} else if(rebateType == 'self') {
+				rebate = rebateNum;
+				profit = (itemPrice * amount) - rebateNum;
+			}
+			$parent.find('td').eq(4).text(comma(rebate) + ' 원');
+			$parent.find('td').eq(5).text(comma(profit) + ' 원');
+			$('#itemHide' + no).find('input[name=amount]').val(amount);
+			$('#itemHide' + no).find('input[name=rebate]').val(rebate);
+			$('#itemHide' + no).find('input[name=profit]').val(profit);
+		});	
+	}
+	
 	$('.btn_addItem').click(function(event){
 		event.preventDefault();
 		var $table = $('.item_wrap table');
@@ -351,7 +380,7 @@
 	        				
 	        	   }, 
 	        	   error: function() {
-	        		   alert('error');
+	        		   console.log('error');
 	        	   }
 	           });
 	        }
@@ -361,10 +390,6 @@
 	$('.btn_final').click(function(event){
 		event.preventDefault();
 		
-		if('${auth}' == 'N') {
-			alert('해당 권한이 없습니다.');
-			return;
-		}
 		var frm = document.frm_reg;
 		var date = $('#kCalendar caption').data('date');
 		var day = $('#kCalendar td.on').text();
@@ -419,8 +444,11 @@
 	
 	$('.btn_mod').click(function(event){
 		event.preventDefault();
-		
-		$(this).css('display', 'none');
+		resetForm();
+	});
+	
+	function resetForm() {
+		$('.btn_mod').css('display', 'none');
 		$('.btn_final').text('영업 등록');
 		$('.sel_area li').removeClass('on');
 		$('.sel_area li').eq(0).addClass('on');
@@ -434,16 +462,17 @@
 		$('.item_final').html('');
 		html += '<table><tbody>';
 		html += '	<tr>';
-		html += '		<th width="40">번호</th>';      
-		html += '		<th width="*">품목</th>';       
-		html += '		<th width="40">수량</th>';      
-		html += '		<th width="105">수익</th>';     
-		html += '		<th width="105">리베이트</th>';  
-		html += '		<th width="60"></th>';        
+		html += '       <th width="40">번호</th>';
+		html += '       <th width="*">품목</th>';
+		html += '       <th width="80">가격</th>';
+		html += '       <th width="60">수량</th>';
+		html += '       <th width="80">리베이트</th>';
+		html += '       <th width="80">수익</th>';
+		html += '       <th width="40"></th>';       
 		html += '	</tr>';
 	    html += '</tbody></table>';
 		$('.item_final').html(html);
-	});
+	}
 	
 	function searchCompany(companyName) {
 		$('.sel_comp').val(companyName).prop('selected', true);
@@ -464,9 +493,12 @@
 	function renameForItem() {
 	    $(".itemHide").each( function (index) {
 	        $(this).find("input[name=itemName]").attr("name", "salesList[" + index + "].itemName");
+	        $(this).find("input[name=itemPrice]").attr("name", "salesList[" + index + "].itemPrice");
 	        $(this).find("input[name=amount]").attr("name", "salesList[" + index + "].amount");
-	        $(this).find("input[name=profit]").attr("name", "salesList[" + index + "].profit");
+	        $(this).find("input[name=rebateType]").attr("name", "salesList[" + index + "].rebateType");
+	        $(this).find("input[name=rebateNum]").attr("name", "salesList[" + index + "].rebateNum");
 	        $(this).find("input[name=rebate]").attr("name", "salesList[" + index + "].rebate");
+	        $(this).find("input[name=profit]").attr("name", "salesList[" + index + "].profit");
 	    });
 	}
 	

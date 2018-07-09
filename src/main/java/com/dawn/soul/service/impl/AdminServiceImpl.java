@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dawn.soul.dao.AdminDAO;
+import com.dawn.soul.dao.HistoryDAO;
 import com.dawn.soul.domain.AdminVO;
+import com.dawn.soul.domain.HistoryVO;
 import com.dawn.soul.service.AdminService;
 
 @Service
@@ -15,6 +17,9 @@ public class AdminServiceImpl implements AdminService {
 
 	@Autowired
 	private AdminDAO adminDAO;
+	
+	@Autowired
+	private HistoryDAO historyDAO;
 	
 	@Override
 	public List<AdminVO> getAdminList() throws SQLException {
@@ -50,9 +55,13 @@ public class AdminServiceImpl implements AdminService {
 			if(loginUser.getAdminPwd().equals(admin.getAdminPwd())) {
 				if(loginUser.getAdminUseyn().equals("R"))
 					return 2; // 관리자 승인 필요
-				else
+				else {
+					HistoryVO history = new HistoryVO();
+					String text = loginUser.getAdminName() + " (" + loginUser.getAdminId() + ") 님이 로그인 하였습니다.";
+					history.setHistoryText(text);
+					historyDAO.insertHistory(history);
 					return 1; // 로그인 성공
-				
+				}
 			} else
 				return 0; // 비밀번호 일치 x
 		}

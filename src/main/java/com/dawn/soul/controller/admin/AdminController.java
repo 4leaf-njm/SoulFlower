@@ -27,6 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.dawn.soul.domain.AdminVO;
 import com.dawn.soul.domain.AreaVO;
 import com.dawn.soul.domain.CompanyVO;
+import com.dawn.soul.domain.HistoryVO;
 import com.dawn.soul.domain.ItemVO;
 import com.dawn.soul.domain.SalesDataVO;
 import com.dawn.soul.domain.SalesDetailVO;
@@ -35,6 +36,7 @@ import com.dawn.soul.domain.SalesVO;
 import com.dawn.soul.service.AdminService;
 import com.dawn.soul.service.AreaService;
 import com.dawn.soul.service.CompanyService;
+import com.dawn.soul.service.HistoryService;
 import com.dawn.soul.service.ItemService;
 import com.dawn.soul.service.SalesService;
 import com.dawn.soul.util.AuthUtil;
@@ -57,6 +59,9 @@ public class AdminController {
 
 	@Autowired
 	private SalesService salesService;
+	
+	@Autowired
+	private HistoryService historyService;
 	
 	@Autowired
 	private AuthUtil authUtil;
@@ -89,9 +94,15 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/logout.do", method=RequestMethod.GET)
-	public String logout(HttpSession session, RedirectAttributes rttr) {
+	public String logout(HttpSession session, RedirectAttributes rttr) throws SQLException {
+		AdminVO loginUser = (AdminVO) session.getAttribute("loginUser");
 		session.invalidate();
 		rttr.addFlashAttribute("msg", "로그아웃 되었습니다.");
+		
+		HistoryVO history = new HistoryVO();
+		String text = loginUser.getAdminName() + " (" + loginUser.getAdminId() + ") 님이 로그아웃 하였습니다.";
+		history.setHistoryText(text);
+		historyService.insertHistory(history);
 		return "redirect:login.do";
 	}
 	
@@ -134,7 +145,7 @@ public class AdminController {
 		List<SalesVO> salesSearchList = salesService.getSearchSales(type, date, areaCheckList);
 		Set<String> itemList = new TreeSet<String>();
 		Set<String> companyList = new HashSet<String>();
-		int totalProfit = 0, totalRebate = 0;
+		int totalPrice = 0, totalRebate = 0;
 		if(salesSearchList != null) {
 			for(int i=0; i<salesSearchList.size(); i++) {
 				SalesVO sales = salesSearchList.get(i);
@@ -163,9 +174,9 @@ public class AdminController {
 					SalesVO sales = salesList2.get(i);
 					List<SalesDetailVO> salesDetList = salesService.getSalesDetList(sales.getSalesNo());
 					for(SalesDetailVO det : salesDetList) {
-						profit += det.getProfit();
+						profit += det.getItemPrice() * det.getAmount();
 						rebate += det.getRebate();
-						totalProfit += det.getProfit();
+						totalPrice += det.getItemPrice() * det.getAmount();
 						totalRebate += det.getRebate();
 						
 						int idx = 0;
@@ -216,19 +227,20 @@ public class AdminController {
 		model.addAttribute("itemCheckList", itemList);
 		model.addAttribute("companyList", companyList);
 		model.addAttribute("salesDataMap", salesDataMap);
-		model.addAttribute("totalProfit", totalProfit);
+		model.addAttribute("totalPrice", totalPrice);
 		model.addAttribute("totalRebate", totalRebate);
-		model.addAttribute("totalRealProfit", totalProfit - totalRebate);
+		model.addAttribute("totalProfit", totalPrice - totalRebate);
 		
 		return "admin/main";
 	}
 	
 	@RequestMapping(value="/register.do", method=RequestMethod.GET)
-	public String register(@ModelAttribute("menu_code") String menu_code, Model model, HttpSession session) throws SQLException {
+	public String register(@ModelAttribute("menu_code") String menu_code, Model model, HttpSession session, RedirectAttributes rttr) throws SQLException {
 		AdminVO loginUser = (AdminVO) session.getAttribute("loginUser");
 		if(!authUtil.hasRole(loginUser.getAdminId(), "ROLE_SALES_REGISTER")) {
-			model.addAttribute("msg", "권한이 없습니다.");
-			model.addAttribute("auth", "N");
+			rttr.addAttribute("menu_code", "01");
+			rttr.addFlashAttribute("msg", "접근 권한이 없습니다.");
+			return "redirect:main.do";
 		}
 		List<AreaVO> areaList = areaService.getAreaList();
 		List<CompanyVO> companyList = companyService.getCompanyList();
@@ -294,7 +306,7 @@ public class AdminController {
 		List<SalesVO> salesSearchList = salesService.getSearchSales(type, date, areaCheckList);
 		Set<String> itemList2 = new TreeSet<String>();
 		Set<String> companyList2 = new HashSet<String>();
-		int totalProfit = 0, totalRebate = 0;
+		int totalPrice = 0, totalRebate = 0;
 		if(salesSearchList != null) {
 			for(int i=0; i<salesSearchList.size(); i++) {
 				SalesVO sales = salesSearchList.get(i);
@@ -351,9 +363,9 @@ public class AdminController {
 							detItr.remove();
 							continue;
 						}
-						profit += det.getProfit();
+						profit += det.getItemPrice() * det.getAmount();
 						rebate += det.getRebate();
-						totalProfit += det.getProfit();
+						totalPrice += det.getItemPrice() * det.getAmount();
 						totalRebate += det.getRebate();
 						
 						int idx = 0;
@@ -413,9 +425,9 @@ public class AdminController {
 		model.addAttribute("companyList", companyList2);
 		model.addAttribute("companyCheckList", companyCheckList);
 		model.addAttribute("salesDataMap", salesDataMap);
-		model.addAttribute("totalProfit", totalProfit);
+		model.addAttribute("totalPrice", totalPrice);
 		model.addAttribute("totalRebate", totalRebate);
-		model.addAttribute("totalRealProfit", totalProfit - totalRebate);
+		model.addAttribute("totalProfit", totalPrice - totalRebate);
 		
 		return "admin/main";
 	}

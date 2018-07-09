@@ -8,7 +8,7 @@
 		<div class="history">
 			<div class="sales_top">
 				<div class="daily" style="margin-right: 0;">
-					<h2 class="title">날짜별 매출</h2>
+					<h2 class="title">날짜별 검색</h2>
 					<select name="" class="sel_cal">
 						<option value="year" <c:out value="${type eq 'year' ? 'selected=\"selected\"' : ''}" />>연도 별</option>
 						<option value="month" <c:out value="${type eq 'month' ? 'selected=\"selected\"' : ''}" />>월 별</option>
