@@ -6,7 +6,7 @@
 		<h1 class="title">소울플라워 관리자</h1>
 		<form method="post" name="frm_login">
 			<input type="text" name="adminId" placeholder="아이디" value="${admin.adminId }" />
-			<input type="password" name="adminPwd" placeholder="비밀번호" value="${admin.adminPwd }" />
+			<input type="password" name="adminPwd" placeholder="비밀번호" value="${admin.adminPwd }" onkeydown="javascript:onEnterSubmit()"/>
 			<button type="button" class="btn_login" onclick="login();">로그인</button>
 		</form>
 		<p class="go_join">
@@ -31,6 +31,12 @@
 				return false;
 			}
 			frm.submit();
+		}
+		
+		function onEnterSubmit(){
+			var keyCode = window.event.keyCode;
+			if(keyCode==13) 
+				document.frm_login.submit();
 		}
 	</script>
 </div>
