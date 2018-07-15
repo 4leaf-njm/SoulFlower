@@ -23,4 +23,9 @@ public interface SalesDAO {
 	List<SalesVO> selectSearchSales(HashMap<String, Object> params) throws SQLException;
 	
 	List<SalesVO> selectSalesListByDate(String salesDate) throws SQLException;
+	
+	List<SalesVO> selectRealSalesList() throws SQLException;
+	
+	void updateDepyn(SalesVO sales) throws SQLException;
+	
 }

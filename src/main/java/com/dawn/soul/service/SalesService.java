@@ -25,7 +25,13 @@ public interface SalesService {
 
 	List<SalesVO> getSearchSales(String type, String date, String areaList, String[] companyList) throws SQLException;
 	
+	List<SalesVO> getSearchSales(String type, String date, String areaList, String depyn) throws SQLException;
+	
 	List<SalesVO> getSalesListByDate(String salesDate) throws SQLException;
 	
 	void removeSalesDetail(int salesNo) throws SQLException;
+	
+	void modifyDepyn(AdminVO admin, SalesVO sales, String page) throws SQLException;
+	
+	List<SalesVO> getRealSalesList() throws SQLException;
 }

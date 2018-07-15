@@ -11,15 +11,24 @@
 					<th>지역명</th>
 					<th></th>
 				</tr>
+				<c:choose>
+				<c:when test="${empty areaList }">
+					<tr>
+						<td colspan="3">지역을 추가해주세요.</td>
+					</tr>
+				</c:when>
+				<c:otherwise>
 				<c:forEach var="area" items="${areaList }" varStatus="status">
-				<tr>
-					<td>${status.count}</td>
-					<td>${area.areaName}</td>
-					<td>
-						<a href="javascript:remove('${area.areaNo}', '${area.areaName }', '${menu_code }')"><i class="fas fa-minus"></i></a>
-					</td>
-				</tr>
+					<tr>
+						<td>${status.count}</td>
+						<td>${area.areaName}</td>
+						<td>
+							<a href="javascript:remove('${area.areaNo}', '${area.areaName }', '${menu_code }')"><i class="fas fa-minus"></i></a>
+						</td>
+					</tr>
 				</c:forEach>
+				</c:otherwise>
+				</c:choose>
 			</table>
 			
 			<div class="add_area">
@@ -35,6 +44,9 @@
 	</div>
 
 	<script>
+		if('${msg}' != '') {
+			alert('${msg}');	
+		}
 		function insert() {
 			var frm = document.frm_add;
 			if(frm.areaName.value == '') {

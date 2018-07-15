@@ -108,12 +108,21 @@ public class SalesServiceImpl implements SalesService {
 		params.put("date", date);
 		params.put("areaList", list);
 		params.put("companyList", companyList);
-		System.out.println("length : " + companyList.length);
-		for(String company : companyList)
-			System.out.println(company);
 		return salesDAO.selectSearchSales(params);
 	}
 
+	@Override
+	public List<SalesVO> getSearchSales(String type, String date, String areaList, String depyn)
+			throws SQLException {
+		String[] list = areaList != null ? areaList.split(", ") : null;
+		HashMap<String, Object> params = new HashMap<String, Object>();
+		params.put("type", type);
+		params.put("date", date);
+		params.put("areaList", list);
+		params.put("depyn", depyn);
+		return salesDAO.selectSearchSales(params);
+	}
+	
 	@Override
 	public List<SalesVO> getSalesListByDate(String salesDate) throws SQLException {
 		return salesDAO.selectSalesListByDate(salesDate);
@@ -124,5 +133,32 @@ public class SalesServiceImpl implements SalesService {
 		salesDetailDAO.deleteSalesDetail(salesNo);
 	}
 
+	@Override
+	public void modifyDepyn(AdminVO admin, SalesVO sales, String page) throws SQLException {
+		SalesVO s = salesDAO.selectSalesByNo(sales.getSalesNo());
+		
+		List<SalesDetailVO> salesDetList = salesDetailDAO.selectSalesDetailListByNo(sales.getSalesNo());
+		int total = 0;
+		for(SalesDetailVO salesDet : salesDetList) {
+			total += salesDet.getItemPrice() * salesDet.getAmount();
+		}
+		String text = "";
+		if(!"real".equals(page))
+			text = admin.getAdminName() + " (" + admin.getAdminId() + ") 님이 " + s.getLeader() + " 팀장의 " + total + "원에 대한 입금처리를 했습니다. (미수금 " + sales.getNoneDep() + "원)";
+		else {
+			text = admin.getAdminName() + " (" + admin.getAdminId() + ") 님이 " + s.getLeader() + " 팀장의 " + s.getNoneDep() + "원에 대한 미수금처리를 했습니다. (남은 미수금 " + (s.getNoneDep() - sales.getNoneDep()) + "원)";
+			sales.setNoneDep(s.getNoneDep() - sales.getNoneDep());
+		}
+		HistoryVO history = new HistoryVO();
+		history.setHistoryText(text);
+		historyDAO.insertHistory(history);
+		
+		salesDAO.updateDepyn(sales);
+	}
+
+	@Override
+	public List<SalesVO> getRealSalesList() throws SQLException {
+		return salesDAO.selectRealSalesList();
+	}
 	
 }

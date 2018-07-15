@@ -17,5 +17,6 @@ public class SalesVO {
 	private String leader;  // 팀장명
 	private Date salesDate;  // 영업일
 	private Timestamp regDate; // 등록일
-	private Timestamp modifyDate; // 수정일
+	private String depyn; // 입금 여부
+	private int noneDep; // 미수금
 }

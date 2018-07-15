@@ -41,7 +41,7 @@
 					</c:choose>
 				</div>
 			</div>
-			<form action="searchSale.do" method="post" name="frm_search">
+			<form action="searchRealSale.do" method="post" name="frm_search">
 				<input type="hidden" name="menu_code" value="${menu_code }" />
 				<input type="hidden" name="type" />
 				<input type="hidden" name="date" />
@@ -51,7 +51,7 @@
 		</div>
 		
 		<div class="sales_list">
-			<form action="search.do" method="post" name="frm_search2">
+			<form action="searchReal.do" method="post" name="frm_search2">
 				<input type="hidden" name="menu_code" value="${menu_code }" />
 				<input type="hidden" name="type" />
 				<input type="hidden" name="date" />
@@ -134,7 +134,7 @@
 										<th>장례식장</th>
 										<th>고인명</th>
 										<th>호실</th>
-										<th>입금여부</th>
+										<th>미수금</th>
 									</tr>
 									<c:forEach var="sales" items="${dataMap.value.salesList }">
 										<tr class="tr_info" data-no="${sales.salesNo }">
@@ -145,12 +145,12 @@
 											<td>${sales.deadName }</td>
 											<td>${sales.hosil }</td>
 											<td>
-												<c:choose>
-												<c:when test="${sales.depyn eq 'N' }">
-													<a href="#" class="btn_deposit">입금확인</a>
-												</c:when>
-												<c:otherwise><span style="font-weight: bold; color: #fd3d3d;">입금완료</span></c:otherwise>
-												</c:choose>
+											   <span style="position: relative; display: block; width: 186px;">
+											   	   <fmt:formatNumber value="${sales.noneDep }" pattern="#,##0" /> 원
+												   <c:if test="${sales.noneDep ne 0 }">
+												   	   <a href="#" class="btn_deposit" style="position: absolute; bottom: -6px; right: 3px;">미수금입금</a>
+												   </c:if>
+											   </span>
 											</td>
 										</tr>
 										<tr class="tr_item">
@@ -192,7 +192,8 @@
 				<div class="sales_res">
 					<h3 class="res">
 						총 매출<span class="sale_money"><fmt:formatNumber value="${totalPrice }" pattern="#,##0" /></span>&nbsp;-&nbsp;
-						리베이트<span class="sale_money"><fmt:formatNumber value="${totalRebate }" pattern="#,##0" /></span>&nbsp;=&nbsp;
+						리베이트<span class="sale_money"><fmt:formatNumber value="${totalRebate }" pattern="#,##0" /></span>&nbsp;-&nbsp;
+						미수금<span class="sale_money"><fmt:formatNumber value="${totalNonedep }" pattern="#,##0" /></span>&nbsp;=&nbsp;
 						순 수익<span class="sale_money"><fmt:formatNumber value="${totalProfit }" pattern="#,##0" /></span>
 					</h3>
 				</div>
@@ -200,7 +201,7 @@
 		</div>
 		<div class="check_popup">
 			<div class="head">
-				<h3>입금 확인</h3>
+				<h3>미수금 입금확인</h3>
 			</div>
 			<div class="body">
 				<form action="checkDeposit.do" method="post" name="frm_chk_dep">
@@ -208,6 +209,7 @@
 					<input type="hidden" name="type" />
 					<input type="hidden" name="date" />
 					<input type="hidden" name="areaCheckList" />
+					<input type="hidden" name="page" value="real" />
 					<input type="hidden" name="salesNo" />
 					<table>
 						<colgroup>
@@ -233,15 +235,8 @@
 							<td class="deadName"></td>
 						</tr>
 						<tr>
-							<th>입금금액</th>
-							<td colspan="3" class="deposit"></td>
-						</tr>
-						<tr>
-							<th>미수금</th>
-							<td colspan="3">
-								<label><input type="radio" name="rd_none_dep" value="N" checked="checked" />없음</label>
-								<label><input type="radio" name="rd_none_dep" value="Y" />있음<input type="text" name="noneDep" readonly="readonly" /></label>
-							</td>
+							<th>입금한 미수금</th>
+							<td colspan="3"><input type="text" name="noneDep" /></td>
 						</tr>
 					</table>
 				</form>
@@ -254,6 +249,7 @@
 	</div>
 	<script>
 		$(document).ready(function(){
+			console.log('aa b${msg}b');
 			if('${msg}' != '') {
 				alert('${msg}');	
 			}
@@ -430,31 +426,25 @@
 		
 		var frmdep = document.frm_chk_dep;
 		function popupOk() {
-			var rdval = $('input:radio[name=rd_none_dep]:checked').val();
 			var noneDep = $('input[name=noneDep]');
-			var deposit = $('.check_popup .deposit').text().replace(' 원', '').replace(/,/gi, '');
-			if(rdval == 'Y') {
-				if(noneDep.val() == '') {
-					alert('미수금을 입력해주세요.');
-					noneDep.focus();
-					return;
-				} else if (isNaN(noneDep.val()) == true) {
-					alert('숫자만 입력해주세요.');
-					noneDep.focus();
-					return;
-				} else if (parseInt(noneDep.val()) > parseInt(deposit)) {
-					alert('입금 금액보다 클 수 없습니다.');
-					noneDep.focus();
-					return;
-				}
+			if(noneDep.val() == '') {
+				alert('미수금을 입력해주세요.');
+				noneDep.focus();
+				return;
+			} else if (isNaN(noneDep.val()) == true) {
+				alert('숫자만 입력해주세요.');
+				noneDep.focus();
+				return;
+			} else if (parseInt(noneDep.val()) > parseInt(noneDep.data('dep'))) {
+				alert('입력하신 금액은 ' + noneDep.data('dep') + '원 보다 작아야합니다.');
+				noneDep.focus();
+				return;
 			}
 			var result = confirm('입금 확인이 되었습니까 ?');
 			if(result) {
 				var type = '${type}';
 				var date = '${date}';
 				var areaCheckList = '${areaCheckList}';
-				if(rdval == 'N') 
-					noneDep.val('0');
 				frmdep.type.value = type;
 				frmdep.date.value = date;
 				frmdep.areaCheckList.value = areaCheckList;
@@ -475,11 +465,8 @@
 						$('.check_popup .areaName').text(getValue(key, 'areaName'));
 						$('.check_popup .funeral').text(getValue(key, 'funeral'));
 						$('.check_popup .deadName').text(getValue(key, 'deadName'));
-						var deposit = 0;
-						$.each(value, function(idx, val) {
-							deposit += val.itemPrice * val.amount; 
-						});
-						$('.check_popup .deposit').text(comma(deposit) + ' 원');
+						$('.check_popup input[name=noneDep]').val(getValue(key, 'noneDep'));
+						$('.check_popup input[name=noneDep]').data('dep', getValue(key, 'noneDep'));
 					});
 					frmdep.salesNo.value = no;
 					$('.check_popup').show();
@@ -499,17 +486,6 @@
 			var split = str.split('(')[1].replace(')', '').split(key)[1];
 			return split.split(',')[0].replace('=', '');
 		}
-		
-		$('input:radio[name=rd_none_dep]').on('change', function() {
-			var val = $(this).val();
-			if(val == 'Y') {
-				$('input[name=noneDep]').focus();
-				$('input[name=noneDep]').prop('readonly', false);
-			} else {
-				$('input[name=noneDep]').val('');
-				$('input[name=noneDep]').prop('readonly', true);
-			}
-		});
 	</script>
 	
 	<script>

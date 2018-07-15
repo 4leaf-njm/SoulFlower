@@ -4,7 +4,7 @@
 	position: relative;
 	width: 100%;
 	height: 100%;
-	background: #d5ebf66b;
+	background: #edf7fb;
 }
 
 .login {
@@ -121,21 +121,31 @@
 	border-left: 1px solid #dedede;
 }
 .step01 .sel_area {
+	overflow-y: scroll;
 	padding: 10px;
     width: 150px;
     height: 250px;
     text-align: center;
     border: 1px solid #dedede;
-    outline: none;
 }
 
-.step01 .sel_area option {
-	margin: 5px 0;
-	padding: 5px 0;
+.step01 .sel_area ul {
+	height: 100%;	
 }
 
-.step01 .sel_area option:hover {
+.step01 .sel_area li {
+	margin: 3px 0;
+	padding: 7px 0;
+	font-size: 12px;
+}
+
+.step01 .sel_area li:hover {
 	background: #f5f5f5;	
+	cursor: pointer;
+}
+
+.step01 .sel_area li.on {
+	background: #e7e7e7;
 }
 
 .step02 {
@@ -211,6 +221,7 @@
 }
 
 .step03 .bottom .tit {
+	min-height: 30px;
 	font-size: 13px;
 	text-align: center;
 	font-weight: bold;
@@ -225,18 +236,20 @@
 .step03 .bottom .list {
     overflow-y: scroll;
     margin: 10px 0 0;
-    padding: 5px 10px;
+    padding: 5px;
     height: 155px;
     border: 1px solid #dedede;
 }
 
 .step03 .bottom .list li {
 	display: block;
-	margin: 12px 0;
+	margin: 5.5px 0;
 }
 
 .step03 .bottom .list li a {
+	display: block;
 	font-size: 11px;
+    line-height: 135%;
 }
 
 .step03 .bottom .list li:hover a {
@@ -389,8 +402,9 @@
 
 .step05 .item_wrap .btn_reg {
     display: inline-block;
-    padding: 2px 4px;
+    padding: 0px 4px;
     height: 23px;
+    line-height: 23px;
     vertical-align: top;
     font-size: 9px;
     background: #fff;
@@ -469,9 +483,15 @@
     outline: none;
 }
 
+.step06 .btn_box {
+	margin: 20px 0 0;
+	text-align: center;
+	font-size: 0;
+}
+
 .step06 .btn_final {
-    display: block;
-    margin: 20px auto 0;
+    display: inline-block;
+    margin: 0 3px;
     width: 130px;
     height: 40px;
     line-height: 40px;
@@ -480,6 +500,20 @@
     color: #fff;
     background: #636363;
     border-radius: 3px;
+}
+
+.step06 .btn_mod {
+    display: none;
+    margin: 0 3px;
+    width: 130px;
+    height: 40px;
+    line-height: 40px;
+	font-size: 13px;
+    font-weight: bold;
+    color: #333;
+    background: #fff;
+    border-radius: 3px;
+    border: 1px solid #636363;
 }
 
 .tbl_sub {
@@ -707,10 +741,24 @@
 .sales_list .outer > tbody > tr > th .hide_box {
     position: absolute;
 	display: none;
-    padding: 5px 0;
     width: 140px;
+    height: 501px;
+    background: none;
+}
+
+.sales_list .outer > tbody > tr > th .hide_box > div {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    max-height: 501px;
     background: #fdfdfd;
     border: 1px solid #dedede;
+}
+
+.sales_list .outer > tbody > tr > th .hide_box > div > div {
+    overflow-y: scroll;
+    padding: 5px 0 0;
+    max-height: 472px;
 }
 
 .sales_list .outer > tbody > tr > th .hide_box label {
@@ -728,8 +776,8 @@
 
 .sales_list .outer > tbody > tr > th .hide_box .btn-sm {
     display: inline-block;
-    margin: 3px 1px 2px;
-    padding: 3px 3px;
+    margin: 5px 0;
+    padding: 3px;
     font-size: 10px;
     background: #efefef;
     border: 1px solid #c7c7c7;
@@ -737,13 +785,13 @@
 }
 
 .sales_list .outer > tbody > tr > th .comp_box {
-    top: 31px;
+    top: -501px;
     left: -0.5px;
 }
 
 .sales_list .outer > tbody > tr > th .item_box {
-    top: 31px;
-    right: -1.5px;
+    top: -501px;
+    right: -0.5px;
 }
 
 .sales_list .outer > tbody > tr > td {
@@ -766,38 +814,55 @@
 
 .sales_list .inner_tit {
     padding: 5px 0 15px 5px;
-    text-align: left;
-    font-size: 12px;
+    text-align: center;
+    font-size: 13px;
     color: #ff6b6b;
 }
 	
 .sales_list .inner {
+	margin: 0 auto 8px;
     border-top: 2px solid #b7b7b7;
     border-bottom: 2px solid #b7b7b7;
 }
 
 .sales_list .inner tr.tr_info th {
-	padding: 10px 35px;
+	padding: 10px 68px;
     background: #f5f5f5;
+    font-size: 12px;
 }
 
 .sales_list .inner tr.tr_info td {
 	padding: 8px 0;
-	font-size: 11px;
+	font-size: 12px;
     border-top: 1px solid #d2d2d2;
+}
+
+.sales_list .inner tr.tr_info td .btn_deposit {
+    display: inline-block;
+    padding: 0px 4px;
+    height: 23px;
+    vertical-align: top;
+    line-height: 23px;
+    font-size: 10px;
+    background: #fff;
+    border: 1px solid #dedede;
+    border-radius: 3px;
+    cursor: pointer;
+    outline: none;
+    font-weight: bold;
 }
 
 .sales_list .inner tr.tr_item th {
 	padding: 10px 35px;
     border-top: 1px dashed #a9a9a9;
-    font-size: 11px;
+    font-size: 12px;
     color: #676767;
 }
 
 .sales_list .inner tr.tr_item td {
 	padding: 8px 0;
     font-family: 'droid-serif-normal';
-    font-size: 10px;
+    font-size: 11.8px;
 	color: #676767;
 }
 
@@ -826,4 +891,162 @@
 	font-family: 'droid-serif';
     font-size: 28px;
     color: #545454;
+}
+
+.acc_title {
+    margin: 10px 0 20px;
+    text-align: center;
+    font-size: 18px;
+    font-family: '맑은 고딕';
+}
+
+.acc_tbl {
+    margin: 0 auto 100px;
+}
+
+.acc_tbl tr {
+	border-bottom: 1px solid #dedede;
+}
+
+.acc_tbl th {
+    padding: 10px;
+}
+
+.acc_tbl td {
+	padding: 10px 15px;
+    text-align: center;
+}
+
+.acc_tbl .btn {
+    padding: 2px 3px;
+	font-size: 10px;
+    font-weight: bold;
+    border: 1px solid #dedede;
+    border-radius: 5px;
+}
+
+.history ul {
+    overflow-y: scroll;
+    margin: 0 auto;
+    padding: 15px 20px;
+	width: 1000px;
+    height: 535px;
+    border: 1px solid #dedede;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    box-shadow: 3px 3px 3px #b5b5b5;
+}
+
+.history ul li {
+    margin: 10px;
+    font-family: 'droid-serif-normal';
+	font-size: 12px;
+}
+
+.check_popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -260px;
+    margin-top: -150px;
+    border-radius: 5px;
+    box-shadow: 3px 3px 3px #ababab;
+}
+
+.check_popup .head {
+    padding: 15px 0 15px 20px;
+	background: #4a566c;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.check_popup .head h3 {
+	color: #f5fcfe;
+}
+
+.check_popup .body {
+    padding: 15px 20px 5px 20px;
+	background: #f6fbff;
+    border-bottom: 1px solid #d6d7dd;
+}
+
+.check_popup .body table {
+	border: 1px solid #e0e5ea;
+}
+
+.check_popup .body th {
+    width: 110px;
+    text-align: left;
+    text-indent: 15px;
+    font-family: '맑은고딕';
+    font-size: 11.5px;
+    font-weight: normal;
+    color: #44484d;
+    background: #f2f5fa;
+    border: 1px solid #e0e5ea;
+}
+
+.check_popup .body td {
+	padding: 12px 0 12px 10px;
+    font-size: 11.5px;
+    color: #44484d;
+    border: 1px solid #e0e5ea;
+}
+
+.check_popup .body td label {
+    margin-right: 15px;
+    font-size: 11px;
+}
+
+.check_popup .body td input[type=radio] {
+	margin-right: 2px;
+	vertical-align: middle;	
+}
+
+.check_popup .body td input[type=text] {
+    margin-left: 5px;
+    padding: 3px 0 3px 5px;
+    width: 100px;
+    font-size: 11px;
+    color: #44484d;
+    background: none;
+	border: 1px solid #dedede;
+    outline: none;
+}
+
+.check_popup .foot {
+    padding: 10px 0;
+    text-align: center;
+	background: #f2f5fa;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.check_popup .foot .btn_ok {
+	display: inline-block;
+    margin: 0 3px;
+    width: 100px;
+    height: 32px;
+    line-height: 32px;
+    font-family: '맑은고딕';
+    font-size: 11.5px;
+    color: #f0f7fb;
+    background: #49556b;
+    border: 1px solid #49556b;
+    border-radius: 3px;
+}
+
+.check_popup .foot .btn_cancel {
+	display: inline-block;
+    margin: 0 3px;
+    width: 100px;
+    height: 32px;
+    line-height: 32px;
+    font-family: '맑은고딕';
+    font-size: 11.5px;
+    color: #49556b;
+    background: #f9f9f9;
+    border: 1px solid #888f9a;
+    border-radius: 3px;
 }

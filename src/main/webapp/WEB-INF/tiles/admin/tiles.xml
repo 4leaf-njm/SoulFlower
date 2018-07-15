@@ -22,6 +22,10 @@
 	<definition name="admin/main" extends="adminLayout">
 		<put-attribute name="content" value="/WEB-INF/views/admin/main.jsp" />
 	</definition>
+	
+	<definition name="admin/real_sales" extends="adminLayout">
+		<put-attribute name="content" value="/WEB-INF/views/admin/real_sales.jsp" />
+	</definition>
 
 	<definition name="admin/register" extends="adminLayout">
 		<put-attribute name="content" value="/WEB-INF/views/admin/register.jsp" />

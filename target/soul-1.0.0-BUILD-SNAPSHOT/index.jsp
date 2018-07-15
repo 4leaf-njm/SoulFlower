@@ -12,7 +12,7 @@ for (var info in mobileInfo){
 	}
 }
 if(result) {
-   	location.href="${pageContext.request.contextPath }/admin/login.do";
+   	location.href="${pageContext.request.contextPath }/m/admin/login.do";
 } else {
 	location.href="${pageContext.request.contextPath }/admin/login.do";
 }

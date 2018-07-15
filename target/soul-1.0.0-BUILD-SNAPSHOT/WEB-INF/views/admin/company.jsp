@@ -11,15 +11,24 @@
 					<th>상조회사명</th>
 					<th></th>
 				</tr>
+				<c:choose>
+				<c:when test="${empty companyList }">
+					<tr>
+						<td colspan="3">상조회사를 추가해주세요.</td>
+					</tr>
+				</c:when>
+				<c:otherwise>
 				<c:forEach var="company" items="${companyList }" varStatus="status">
-				<tr>
-					<td>${status.count}</td>
-					<td>${company.companyName}</td>
-					<td>
-						<a href="javascript:remove('${company.companyNo}', '${company.companyName }', '${menu_code }')"><i class="fas fa-minus"></i></a>
-					</td>
-				</tr>
+					<tr>
+						<td>${status.count}</td>
+						<td>${company.companyName}</td>
+						<td>
+							<a href="javascript:remove('${company.companyNo}', '${company.companyName }', '${menu_code }')"><i class="fas fa-minus"></i></a>
+						</td>
+					</tr>
 				</c:forEach>
+				</c:otherwise>
+				</c:choose>
 			</table>
 			
 			<div class="add_area">
@@ -35,6 +44,9 @@
 	</div>
 
 	<script>
+		if('${msg}' != '') {
+			alert('${msg}');	
+		}
 		function insert() {
 			var frm = document.frm_add;
 			if(frm.companyName.value == '') {

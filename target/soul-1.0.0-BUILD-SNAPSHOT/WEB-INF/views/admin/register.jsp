@@ -6,15 +6,20 @@
 	<div class="content">
 		<div style="font-size: 0;">
 			<form method="post" name="frm_reg">
+				<input type="hidden" name="menu_code" value="${menu_code }" />
+				<input type="hidden" name="salesNo" value="0" />
 				<div class="section step01">
 					<h3><span class="txt_step">STEP 01</span>지역 선택</h3>
 					<div class="scrollbar-outer" style="width: 150px; height: 250px; margin: 0 auto;">
-						<select id="areaName" class="sel_area" name="areaName" size="6" onchange="">
-							<option value="" selected>-----------</option>
-							<c:forEach var="area" items="${areaList }">
-								<option value="${area.areaName}">${area.areaName}</option>
-							</c:forEach>
-						</select>
+						<input type="hidden" name="areaName" id="areaName" />
+						<div class="sel_area">
+							<ul>
+								<li class="on" data-val="">- - - -</li>
+								<c:forEach var="area" items="${areaList }">
+									<li data-val="${area.areaName}">${area.areaName}</li>
+								</c:forEach>
+							</ul>
+						</div>
 					</div>
 				</div>
 				<div class="section step02">
@@ -33,19 +38,19 @@
 						</c:forEach>
 					</select>
 					<div class="bottom">
-						<p class="tit"><span>2018-06-01</span>영업한 상조</p>
-						<div class="list scrollbar-outer">
-							<ul>
-								<c:forEach var="company" items="${companyList }">
-									<li><a href="#">${company.companyName}</a></li>
-								</c:forEach>
-							</ul>
-						</div>
+						<p class="tit"></p>
+						<div class="list scrollbar-outer"></div>
 					</div>
 				</div>
 				<div class="section step04">
 					<h3><span class="txt_step">STEP 04</span>영업정보 입력</h3>
 					<div class="input_box">
+						<div class="row">
+							<div class="col-lg">
+								<label for="leader">팀장명</label>
+								<input type="text" name="leader" id="leader" />
+							</div>
+						</div>
 						<div class="row">
 							<div class="col-lg">
 								<label for="funeral">장례식장</label>
@@ -62,12 +67,6 @@
 								<input type="text" name="hosil" id="hosil" />
 							</div>
 						</div>
-						<div class="row">
-							<div class="col-lg">
-								<label for="leader">팀장명</label>
-								<input type="text" name="leader" id="leader" />
-							</div>
-						</div>
 					</div>
 				</div>
 				<div class="section step05">
@@ -79,8 +78,8 @@
 								<th>가격</th>
 								<th>수량</th>
 								<th>리베이트 설정</th>
-								<th width="65px">수익</th>
 								<th width="65px">리베이트</th>
+								<th width="65px">수익</th>
 								<th></th>
 								<th></th>
 							</tr>
@@ -100,7 +99,7 @@
 									<td>
 										<input type="number" name="amount" min="1" value="1" class="txt_amount"/>
 									</td>
-									<td style="padding-right: 22px; border-right: 2px solid #adadad;">
+									<td style="padding-right: 15px; border-right: 2px solid #adadad;">
 										<div style="display: inline-block;">
 											<label class="lbl_rebate"><input type="radio" name="rd_rebate${status.count }" class="rd_rebate" value="per" checked="checked"/>비율</label>
 											<label class="lbl_rebate"><input type="radio" name="rd_rebate${status.count }" class="rd_rebate" value="self"/>직접입력</label>
@@ -130,14 +129,18 @@
 							<tr>
 								<th width="40">번호</th>
 								<th width="*">품목</th>
-								<th width="40">수량</th>
-								<th width="105">수익</th>
-								<th width="105">리베이트</th>
-								<th width="60"></th>
+								<th width="80">가격</th>
+								<th width="60">수량</th>
+								<th width="80">리베이트</th>
+								<th width="80">수익</th>
+								<th width="40"></th>
 							</tr>
 						</table>
 					</div>
-					<a href="#" class="btn_final">영업 등록</a>
+					<div class="btn_box">
+						<a href="#" class="btn_final">영업 등록</a>
+						<a href="#" class="btn_mod">수정 취소</a>
+					</div>
 				</div>
 			</form>
 		</div>
@@ -150,29 +153,23 @@
 
 	window.onload = function() {
 		kCalendar('kCalendar');
+		
+		var today = new Date();
+		var year = today.getFullYear();
+		var month = today.getMonth() + 1;
+		var day = today.getDate();
+		
+		month = (month+'').length == 1 ? '0' + month : month;
+		day = (day+'').length == 1 ? '0' + day : day;
+		getSalesByDate(year + '-' + month + '-' + day);
 	}
 	itemEvent();
 	
 	function itemEvent() {
 		$('.sel_item').change(function(){
 			var $parent = $(this).parents('tr');
-			var val = $(this).find('option:selected').data('no');
-			if(val != '') {
-				$.ajax({
-					url: 'ajaxGetItem.do',
-					type: 'post',
-					dataType: 'json',
-					data: {'no': val},
-					success: function(data) {
-						$parent.find('.txt_price').val(data.itemPrice);
-					}, 
-					error: function() {
-						alert('error');
-					}
-				});
-			} else {
-				$parent.find('.txt_price').val('');
-			}
+			$parent.find('.txt_price').val('');
+			$parent.find('.btn_reg').removeClass('on');
 		});
 		
 		$('.rd_rebate').change(function(){
@@ -241,14 +238,14 @@
 			var result01;
 			var result02;
 			if($parent.find('.rd_rebate:checked').val() == 'per') {
-				result01 = price - (price * rebate / 100);
-				result02 = price * rebate / 100;
+				result01 = price * rebate / 100;
+				result02 = price - (price * rebate / 100);
 			} else if ($parent.find('.rd_rebate:checked').val() == 'self') {
-				result01 = price - rebate;
-				result02 = rebate;
+				result01 = rebate;
+				result02 = price - rebate;
 			}
-			$parent.find('.result01').text(comma(result01) + ' 원');
-			$parent.find('.result02').text(comma(result02) + ' 원');
+			$parent.find('.result01').text(comma(parseInt(result01)) + ' 원');
+			$parent.find('.result02').text(comma(parseInt(result02)) + ' 원');
 			$parent.find('.btn_reg').addClass('on');
 		});
 		
@@ -259,6 +256,7 @@
 			});
 		});
 		
+		var count = 1;
 		$('.btn_reg').click(function(event) {
 			event.stopImmediatePropagation();
 			event.preventDefault();
@@ -266,19 +264,28 @@
 				alert('적용 버튼을 눌러주세요.');
 				return;
 			}
+			if($('.itemHide:last').attr('id') != undefined) {
+				var no = parseInt($('.itemHide:last').attr('id').replace('itemHide', '')) + 1;
+				count = no;
+			}
 			var $parent = $(this).parents('tr');
 			var itemName = $parent.find('.sel_item').val();
+			var itemPrice = $parent.find('.txt_price').val();
 			var amount = $parent.find('.txt_amount').val();
-			var profit = $parent.find('.result01').text().replace(' 원', '').replace(',', '');
-			var rebate = $parent.find('.result02').text().replace(' 원', '').replace(',', '');
+			var rebateType = $parent.find('input:radio[class=rd_rebate]:checked').val();
+			var rebateNum = $parent.find('.txt_rebate').val();
+			var rebate = $parent.find('.result01').text().replace(' 원', '').replace(/,/gi, '');
+			var profit = $parent.find('.result02').text().replace(' 원', '').replace(/,/gi, '');
 			
 			var html = '';
 			html += '<tr>'
 			html += '	<td>' + count + '</td>'
 			html += '	<td>' + itemName + '</td>'
-			html += '	<td>' + amount + '</td>'
-			html += '	<td>' + comma(profit) + ' 원</td>'
+			html += '	<td>' + comma(itemPrice) + ' 원</td>'
+			html += '	<td><input type="text" class="txt_updateAmount" value="' + amount + '" style="width: 30px; padding: 2px 3px; border: 1px solid #dedede; font-size: 11px; text-align: center;"/>';
+			html += '       <a href="#" class="btn_updateAmount"><i class="fas fa-check" style="padding: 0 0 0 3px; color: #ff5959; font-size: 10px;"></i></a></td>';
 			html += '	<td>' + comma(rebate) + ' 원</td>'
+			html += '	<td>' + comma(profit) + ' 원</td>'
 			html += '	<td><a href="#" class="btn_remove">삭제</a></td>'
 			html += '</tr>'
 			$('.item_final table').append(html);
@@ -287,19 +294,55 @@
 			html = '';
 			html += '<div id="itemHide' + count + '" class="itemHide">';
 			html += '	<input type="hidden" name="itemName" value="' + itemName + '" />'
+			html += '	<input type="hidden" name="itemPrice" value="' + itemPrice + '" />'
 			html += '	<input type="hidden" name="amount" value="' + amount + '" />'
-			html += '	<input type="hidden" name="profit" value="' + profit + '" />'
 			html += '	<input type="hidden" name="rebate" value="' + rebate + '" />'
+			html += '	<input type="hidden" name="rebateType" value="' + rebateType + '" />'
+			html += '	<input type="hidden" name="rebateNum" value="' + rebateNum + '" />'
+			html += '	<input type="hidden" name="profit" value="' + profit + '" />'
 			html += '</div>';
 			$('.item_final').append(html);
-			count ++;
+			updateAmountClick();
 		});
 	}
+	
+	function updateAmountClick() {
+		$('.btn_updateAmount').click(function(event) {
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			
+			if($('.txt_updateAmount').val() == '') {
+				alert('수량을 입력해주세요.');
+				$('.txt_updateAmount').focus();
+				return;
+			}
+			var $parent = $(this).parents('tr');
+			var no = $parent.find('td').eq(0).text();
+			var amount = parseInt($parent.find('.txt_updateAmount').val());
+			var itemPrice = parseInt($parent.find('td').eq(2).text().replace(' 원', '').replace(/,/gi, ''));
+			var rebateType = $('#itemHide' + no).find('input[name=rebateType]').val();
+			var rebateNum = parseInt($('#itemHide' + no).find('input[name=rebateNum]').val());
+			var rebate;
+			var profit;
+			if(rebateType == 'per') {
+				rebate = (itemPrice * amount) * (rebateNum / 100);
+				profit = (itemPrice * amount) - ((itemPrice * amount) * (rebateNum / 100));
+			} else if(rebateType == 'self') {
+				rebate = rebateNum;
+				profit = (itemPrice * amount) - rebateNum;
+			}
+			$parent.find('td').eq(4).text(comma(rebate) + ' 원');
+			$parent.find('td').eq(5).text(comma(profit) + ' 원');
+			$('#itemHide' + no).find('input[name=amount]').val(amount);
+			$('#itemHide' + no).find('input[name=rebate]').val(rebate);
+			$('#itemHide' + no).find('input[name=profit]').val(profit);
+		});	
+	}
+	
 	$('.btn_addItem').click(function(event){
 		event.preventDefault();
 		var $table = $('.item_wrap table');
 		var lastItemNo = $table.find("tr:last").attr("class").replace("item", "");
-		console.log(lastItemNo);
         var newitem = $table.find("tr:eq(1)").clone();
         newitem.find('input:radio[class=rd_rebate]').attr('name', 'rd_rebate' + (parseInt(lastItemNo)+1));
         newitem.find('td:last').html('<a href="#" class="btn_removeItem"><i class="fas fa-minus"></i></a>');
@@ -337,7 +380,7 @@
 	        				
 	        	   }, 
 	        	   error: function() {
-	        		   alert('error');
+	        		   console.log('error');
 	        	   }
 	           });
 	        }
@@ -353,9 +396,9 @@
 		day = day.length == 1 ? '0' + day : day;
 		date += '-' + day;
 		
-		if(frm.areaName.value == '') {
+		var areaName = $('.sel_area li.on').data('val');
+		if(areaName == '') {
 			alert('지역을 선택해주세요.');
-			frm.areaName.focus();
 			return;
 		} else if (date.length != 10) {
 			alert('날짜를 선택해주세요.');
@@ -384,12 +427,53 @@
 			alert('품목을 등록해주세요.');
 			return;
 		}
+		var result;
+		var text = $('.btn_final').text();
+		if(text == '영업 수정') {
+			frm.action = 'modifySales.do';
+			result = confirm('영업정보를 변경 하시겠습니까 ?');
+		} else {
+			result = confirm('영업을 등록하시겠습니까 ?');
+		}
+		if(!result) return;
 		frm.salesDate.value = date;
+		frm.areaName.value = areaName;
 		renameForItem();
 		frm.submit();
 	});
 	
-	var count = 1;
+	$('.btn_mod').click(function(event){
+		event.preventDefault();
+		resetForm();
+	});
+	
+	function resetForm() {
+		$('.btn_mod').css('display', 'none');
+		$('.btn_final').text('영업 등록');
+		$('.sel_area li').removeClass('on');
+		$('.sel_area li').eq(0).addClass('on');
+		$('.sel_comp').val('').prop('selected', true);
+		$('#funeral').val('');
+		$('#deadName').val('');
+		$('#hosil').val('');
+		$('#leader').val('');
+		
+		var html = '';
+		$('.item_final').html('');
+		html += '<table><tbody>';
+		html += '	<tr>';
+		html += '       <th width="40">번호</th>';
+		html += '       <th width="*">품목</th>';
+		html += '       <th width="80">가격</th>';
+		html += '       <th width="60">수량</th>';
+		html += '       <th width="80">리베이트</th>';
+		html += '       <th width="80">수익</th>';
+		html += '       <th width="40"></th>';       
+		html += '	</tr>';
+	    html += '</tbody></table>';
+		$('.item_final').html(html);
+	}
+	
 	function searchCompany(companyName) {
 		$('.sel_comp').val(companyName).prop('selected', true);
 		$('.txt_search').val('');
@@ -409,9 +493,17 @@
 	function renameForItem() {
 	    $(".itemHide").each( function (index) {
 	        $(this).find("input[name=itemName]").attr("name", "salesList[" + index + "].itemName");
+	        $(this).find("input[name=itemPrice]").attr("name", "salesList[" + index + "].itemPrice");
 	        $(this).find("input[name=amount]").attr("name", "salesList[" + index + "].amount");
-	        $(this).find("input[name=profit]").attr("name", "salesList[" + index + "].profit");
+	        $(this).find("input[name=rebateType]").attr("name", "salesList[" + index + "].rebateType");
+	        $(this).find("input[name=rebateNum]").attr("name", "salesList[" + index + "].rebateNum");
 	        $(this).find("input[name=rebate]").attr("name", "salesList[" + index + "].rebate");
+	        $(this).find("input[name=profit]").attr("name", "salesList[" + index + "].profit");
 	    });
 	}
+	
+	$('.sel_area li').click(function(){
+		$('.sel_area li').removeClass('on');
+		$(this).addClass('on');
+	});
 </script>

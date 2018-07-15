@@ -127,8 +127,9 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/main.do", method=RequestMethod.GET)
-	public String main(@ModelAttribute("menu_code") String menu_code, @RequestParam(value="type", defaultValue="daily") String type, 
-			           String date, String areaCheckList, Model model, HttpSession session) throws SQLException {
+	public String main(@ModelAttribute("menu_code") String menu_code, @ModelAttribute("check") String check, 
+			           @RequestParam(value="type", defaultValue="daily") String type, String date, 
+			           String areaCheckList, Model model, HttpSession session) throws SQLException {
 		AdminVO loginUser = (AdminVO) session.getAttribute("loginUser");
 		if(!authUtil.hasRole(loginUser.getAdminId(), "ROLE_SALES_VIEW")) {
 			model.addAttribute("auth", "N");
@@ -416,7 +417,7 @@ public class AdminController {
 		for(int i=0; i<companyList.length; i++)
 			companyCheckList += i == companyList.length-1 ? companyList[i] : companyList[i] + ", "; 
 
-			model.addAttribute("areaList", areaList);
+		model.addAttribute("areaList", areaList);
 		model.addAttribute("type", type);
 		model.addAttribute("date", date);
 		model.addAttribute("areaCheckList", areaCheckList);
@@ -446,5 +447,295 @@ public class AdminController {
 		List<SalesDetailVO> salesDetList = salesService.getSalesDetList(salesNo);
 		dataMap.put(sales, salesDetList);
 		return dataMap;
+	}
+	
+	@RequestMapping(value="/real_sales.do", method=RequestMethod.GET)
+	public String realSales(@ModelAttribute("menu_code") String menu_code, @ModelAttribute("check") String check, 
+			                @RequestParam(value="type", defaultValue="daily") String type, String date, 
+			                String areaCheckList, Model model, HttpSession session, RedirectAttributes rttr) throws SQLException {
+		AdminVO loginUser = (AdminVO) session.getAttribute("loginUser");
+		if(!authUtil.hasRole(loginUser.getAdminId(), "ROLE_REALSALES_VIEW")) {
+			rttr.addAttribute("menu_code", "01");
+			rttr.addFlashAttribute("msg", "접근 권한이 없습니다.");
+			return "redirect:main.do";
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		if(date == null)
+			date = sdf.format(new Date());
+		List<SalesVO> salesList = salesService.getRealSalesList();
+		Set<String> areaList = new TreeSet<String>();
+		for(SalesVO sales : salesList) 
+			areaList.add(sales.getAreaName());
+
+		Map<String, SalesDataVO> salesDataMap = new HashMap<String, SalesDataVO>();
+		List<SalesVO> salesSearchList = salesService.getSearchSales(type, date, areaCheckList, "Y");
+		Set<String> itemList = new TreeSet<String>();
+		Set<String> companyList = new HashSet<String>();
+		int totalPrice = 0, totalRebate = 0, totalNonedep = 0;
+		if(salesSearchList != null) {
+			for(int i=0; i<salesSearchList.size(); i++) {
+				SalesVO sales = salesSearchList.get(i);
+				List<SalesDetailVO> salesDetList = salesService.getSalesDetList(sales.getSalesNo()); 
+				for(SalesDetailVO salesDet : salesDetList)
+					itemList.add(salesDet.getItemName());
+				companyList.add(sales.getCompanyName());
+			}
+			Iterator<String> companyItr = companyList.iterator();
+			while(companyItr.hasNext()) {
+				String company = companyItr.next();
+				List<SalesVO> salesList2 = new ArrayList<SalesVO>();
+				for(int i=0; i<salesSearchList.size(); i++) {
+					SalesVO sales = salesSearchList.get(i);
+					if(company.equals(sales.getCompanyName())) {
+						salesList2.add(sales);
+					}
+				}
+				Map<Integer, List<SalesDetailVO>> salesDetMap = new HashMap<Integer, List<SalesDetailVO>>();
+				List<Integer> amountList = new ArrayList<Integer>(itemList.size());
+				for(int i=0; i<itemList.size(); i++) 
+					amountList.add(0);
+				
+				int profit = 0, rebate = 0;
+				for(int i=0; i<salesList2.size(); i++) {
+					SalesVO sales = salesList2.get(i);
+					List<SalesDetailVO> salesDetList = salesService.getSalesDetList(sales.getSalesNo());
+					for(SalesDetailVO det : salesDetList) {
+						profit += det.getItemPrice() * det.getAmount();
+						rebate += det.getRebate();
+						totalPrice += det.getItemPrice() * det.getAmount();
+						totalRebate += det.getRebate();
+						
+						int idx = 0;
+						Iterator<String> itemItr = itemList.iterator();
+						while(itemItr.hasNext()) {
+							String item = itemItr.next();
+							if(item.equals(det.getItemName())) {
+								amountList.set(idx, amountList.get(idx) + det.getAmount());
+							}
+							idx ++;
+						}
+					}
+					totalNonedep += sales.getNoneDep();
+					salesDetMap.put(sales.getSalesNo(), salesDetList);
+				}
+				String[] itemUnit = new String[itemList.size()];
+				List<ItemVO> itemAllList = itemService.getItemList();
+				int idx = 0;
+				for(String itemName : itemList) {
+					for(ItemVO item : itemAllList) {
+						if(itemName.equals(item.getItemName())) {
+							itemUnit[idx] = item.getItemUnit();
+							break;
+						}
+					}
+					idx ++;
+				}
+				List<String> amountList2 = new ArrayList<String>();
+				for(int i=0; i<amountList.size(); i++) {
+					int amount = amountList.get(i);
+					String unit = itemUnit[i];
+					amountList2.add(amount + " " + unit);
+				}
+				SalesDataVO salesData = new SalesDataVO();
+				salesData.setSalesList(salesList2);
+				salesData.setAmountList(amountList2);
+				salesData.setSalesDetMap(salesDetMap);
+				salesData.setProfit(profit);
+				salesData.setRebate(rebate);
+				salesData.setRealProfit(profit - rebate);
+				salesDataMap.put(company, salesData);
+			}
+		}
+		model.addAttribute("areaList", areaList);
+		model.addAttribute("type", type);
+		model.addAttribute("date", date);
+		model.addAttribute("areaCheckList", areaCheckList);
+		model.addAttribute("itemList", itemList);
+		model.addAttribute("itemCheckList", itemList);
+		model.addAttribute("companyList", companyList);
+		model.addAttribute("salesDataMap", salesDataMap);
+		model.addAttribute("totalPrice", totalPrice);
+		model.addAttribute("totalRebate", totalRebate);
+		model.addAttribute("totalProfit", totalPrice - totalRebate - totalNonedep);
+		model.addAttribute("totalNonedep", totalNonedep);
+
+		return "admin/real_sales";
+	}
+	
+	@RequestMapping(value="/searchRealSale.do", method=RequestMethod.POST)
+	public String searchRealSale(String menu_code, String type, String date, String[] areaList, 
+			                 RedirectAttributes rttr) throws SQLException {
+		String areaCheckList = "";
+		for(int i=0; i<areaList.length; i++)
+			areaCheckList += i == areaList.length-1 ? areaList[i] : areaList[i] + ", ";
+
+		rttr.addAttribute("menu_code", menu_code);
+		rttr.addAttribute("type", type);
+		rttr.addAttribute("date", date);
+		rttr.addAttribute("areaCheckList", areaCheckList);
+		return "redirect:real_sales.do";
+	}
+	
+	@RequestMapping(value="/searchReal.do", method=RequestMethod.POST)
+	public String searchReal(@ModelAttribute("menu_code") String menu_code, @RequestParam(value="type", defaultValue="daily") String type, 
+			             String date, String areaCheckList, String[] companyList, String[] itemList, Model model) throws SQLException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		if(date == null)
+			date = sdf.format(new Date());
+		List<String> itemCheckList = new ArrayList<String>();
+		for(String i : itemList)
+			itemCheckList.add(i);
+		
+		List<SalesVO> salesList = salesService.getRealSalesList();
+		Set<String> areaList = new TreeSet<String>();
+		for(SalesVO sales : salesList) 
+			areaList.add(sales.getAreaName());
+		
+		Map<String, SalesDataVO> salesDataMap = new HashMap<String, SalesDataVO>();
+		List<SalesVO> salesSearchList = salesService.getSearchSales(type, date, areaCheckList, "Y");
+		Set<String> itemList2 = new TreeSet<String>();
+		Set<String> companyList2 = new HashSet<String>();
+		int totalPrice = 0, totalRebate = 0, totalNonedep = 0;
+		if(salesSearchList != null) {
+			for(int i=0; i<salesSearchList.size(); i++) {
+				SalesVO sales = salesSearchList.get(i);
+				List<SalesDetailVO> salesDetList = salesService.getSalesDetList(sales.getSalesNo()); 
+				for(SalesDetailVO salesDet : salesDetList)
+					itemList2.add(salesDet.getItemName());
+				companyList2.add(sales.getCompanyName());
+			}
+			Iterator<String> companyItr = companyList2.iterator();
+			while(companyItr.hasNext()) {
+				String company = companyItr.next();
+				
+				if(companyList.length != 0) {
+					boolean flag = false;
+					for(String comp : companyList) {
+						if(company.equals(comp)) {
+							flag = true;
+							break;
+						}
+					}
+					if(!flag) continue;
+				}
+				
+				List<SalesVO> salesList2 = new ArrayList<SalesVO>();
+				for(int i=0; i<salesSearchList.size(); i++) {
+					SalesVO sales = salesSearchList.get(i);
+					if(company.equals(sales.getCompanyName())) {
+						salesList2.add(sales);
+					}
+				}
+				Map<Integer, List<SalesDetailVO>> salesDetMap = new HashMap<Integer, List<SalesDetailVO>>();
+				List<Integer> amountList = new ArrayList<Integer>(itemList.length);
+				for(int i=0; i<itemList.length; i++) 
+					amountList.add(0);
+				
+				int profit = 0, rebate = 0;
+				Iterator<SalesVO> salesItr = salesList2.iterator();
+				while(salesItr.hasNext()) {
+					SalesVO sales = salesItr.next();
+					List<SalesDetailVO> salesDetList = salesService.getSalesDetList(sales.getSalesNo());
+					Iterator<SalesDetailVO> detItr = salesDetList.iterator();
+					while(detItr.hasNext()) {
+						SalesDetailVO det = detItr.next();
+						boolean flag = false;
+						Iterator<String> itemItr = itemCheckList.iterator();
+						while(itemItr.hasNext()) {
+							String item = itemItr.next();
+							if(item.equals(det.getItemName())) {
+								flag = true;
+								break;
+							}
+						}
+						if(!flag) {
+							detItr.remove();
+							continue;
+						}
+						profit += det.getItemPrice() * det.getAmount();
+						rebate += det.getRebate();
+						totalPrice += det.getItemPrice() * det.getAmount();
+						totalRebate += det.getRebate();
+						
+						int idx = 0;
+						for(String item : itemList) {
+							if(item.equals(det.getItemName())) {
+								amountList.set(idx, amountList.get(idx) + det.getAmount());
+							}
+							idx ++;
+						}
+					}
+					if(salesDetList.isEmpty()) {
+						salesItr.remove();
+						continue;
+					}
+					totalNonedep += sales.getNoneDep();
+					salesDetMap.put(sales.getSalesNo(), salesDetList);
+				}
+				String[] itemUnit = new String[itemList2.size()];
+				List<ItemVO> itemAllList = itemService.getItemList();
+				int idx = 0;
+				for(String itemName : itemList) {
+					for(ItemVO item : itemAllList) {
+						if(itemName.equals(item.getItemName())) {
+							itemUnit[idx] = item.getItemUnit();
+							break;
+						}
+					}
+					idx ++;
+				}
+				List<String> amountList2 = new ArrayList<String>();
+				for(int i=0; i<amountList.size(); i++) {
+					int amount = amountList.get(i);
+					String unit = itemUnit[i];
+					amountList2.add(amount + " " + unit);
+				}
+				if(salesList2.isEmpty()) continue;
+				SalesDataVO salesData = new SalesDataVO();
+				salesData.setSalesList(salesList2);
+				salesData.setAmountList(amountList2);
+				salesData.setSalesDetMap(salesDetMap);
+				salesData.setProfit(profit);
+				salesData.setRebate(rebate);
+				salesData.setRealProfit(profit - rebate);
+				salesDataMap.put(company, salesData);
+			}
+		}
+		
+		String companyCheckList = "";
+		for(int i=0; i<companyList.length; i++)
+			companyCheckList += i == companyList.length-1 ? companyList[i] : companyList[i] + ", "; 
+
+		model.addAttribute("areaList", areaList);
+		model.addAttribute("type", type);
+		model.addAttribute("date", date);
+		model.addAttribute("areaCheckList", areaCheckList);
+		model.addAttribute("itemList", itemList2);
+		model.addAttribute("itemCheckList", itemCheckList);
+		model.addAttribute("companyList", companyList2);
+		model.addAttribute("companyCheckList", companyCheckList);
+		model.addAttribute("salesDataMap", salesDataMap);
+		model.addAttribute("totalPrice", totalPrice);
+		model.addAttribute("totalRebate", totalRebate);
+		model.addAttribute("totalProfit", totalPrice - totalRebate - totalNonedep);
+		model.addAttribute("totalNonedep", totalNonedep);
+		
+		return "admin/real_sales";
+	}
+	
+	@RequestMapping(value="/checkDeposit.do", method=RequestMethod.POST)
+	public String checkDeposit(String menu_code, SalesVO sales, String type, String date, String areaCheckList, String page, 
+			                   RedirectAttributes rttr, HttpSession session) throws SQLException {
+		AdminVO loginUser = (AdminVO) session.getAttribute("loginUser");
+		salesService.modifyDepyn(loginUser, sales, page);
+		rttr.addAttribute("menu_code", menu_code);
+		rttr.addAttribute("type", type);
+		rttr.addAttribute("date", date);
+		rttr.addAttribute("areaCheckList", areaCheckList);
+		rttr.addAttribute("check", "y");
+		if("real".equals(page))
+			return "redirect:real_sales.do";
+		else
+			return "redirect:main.do";
 	}
 }

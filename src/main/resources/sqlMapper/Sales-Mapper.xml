@@ -11,7 +11,8 @@
 		<result property="leader" column="leader" />
 		<result property="salesDate" column="salesdate" />
 		<result property="regDate" column="regdate" />
-		<result property="modifyDate" column="modifydate" />
+		<result property="depyn" column="depyn" />
+		<result property="noneDep" column="none_dep" />
 	</resultMap>
 	
 	<select id="selectSalesList" resultMap="salesMap">
@@ -39,8 +40,6 @@
 			 ,HOSIL
 			 ,LEADER
 			 ,SALESDATE
-			 ,REGDATE
-			 ,MODIFYDATE
 		) VALUES (
 			  #{areaName}
 			 ,#{companyName}
@@ -49,8 +48,6 @@
 			 ,#{hosil}
 			 ,#{leader}
 			 ,#{salesDate}
-			 ,#{regDate}
-			 ,#{modifyDate}
 		)
 	</insert>
 	
@@ -65,8 +62,6 @@
 			 ,HOSIL = #{hosil}
 			 ,LEADER = #{leader}
 			 ,SALESDATE = #{salesDate}
-			 ,REGDATE = #{regDate}
-			 ,MODIFYDATE = #{modifyDate}
 		WHERE 
 			SALES_NO = #{salesNo}
 	</update>
@@ -117,6 +112,10 @@
 				#{company}
 			</foreach>
 		</if>
+		<if test="depyn != null and depyn == 'Y'.toString()">
+			AND
+				DEPYN = #{depyn}
+		</if>
 		ORDER BY
 			SALESDATE ASC
 	</select>
@@ -128,5 +127,24 @@
 			SALES
 		WHERE 
 			SALESDATE = #{salesDate}
+	</select>
+	
+	<update id="updateDepyn" parameterType="sales">
+		UPDATE
+			SALES
+		SET
+			 DEPYN = 'Y'
+		    ,NONE_DEP = #{noneDep}
+		WHERE
+			SALES_NO = #{salesNo}
+	</update>
+	
+	<select id="selectRealSalesList" resultMap="salesMap">
+		SELECT
+			*
+		FROM
+			SALES
+		WHERE
+			DEPYN = 'Y'
 	</select>
 </mapper>

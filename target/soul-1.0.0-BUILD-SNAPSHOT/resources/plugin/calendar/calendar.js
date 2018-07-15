@@ -54,9 +54,9 @@ function kCalendar(id, date) {
 	var calendar = '';
 	
 	calendar += '<div id="header">';
-	calendar += '			<span><a href="#" class="button left" onclick="kCalendar(\'' +  id + '\', \'' + prevDate + '\')"><i class="fas fa-angle-left"></i></a></span>';
+	calendar += '			<span><a href="javascript:kCalendar(\'' +  id + '\', \'' + prevDate + '\')" class="button left"><i class="fas fa-angle-left"></i></a></span>';
 	calendar += '			<span id="date">' + currentYear + '년 ' + currentMonth + '월</span>';
-	calendar += '			<span><a href="#" class="button right" onclick="kCalendar(\'' + id + '\', \'' + nextDate + '\')"><i class="fas fa-angle-right"></i></a></span>';
+	calendar += '			<span><a href="javascript:kCalendar(\'' +  id + '\', \'' + nextDate + '\')" class="button right"><i class="fas fa-angle-right"></i></a></span>';
 	calendar += '		</div>';
 	calendar += '		<table border="0" cellspacing="0" cellpadding="0">';
 	calendar += '			<caption data-date="' + currentYear + '-' + currentMonth + '">' + currentYear + '년 ' + currentMonth + '월 달력</caption>';
@@ -75,6 +75,10 @@ function kCalendar(id, date) {
 	
 	var dateNum = 1 - currentDay;
 	
+	var today = new Date();
+	var todayYear = today.getFullYear();
+	var todayMonth = today.getMonth() + 1;
+	todayMonth = (todayMonth + '').length == 1 ? '0' + todayMonth : todayMonth;
 	for(var i = 0; i < week; i++) {
 		calendar += '			<tr>';
 		for(var j = 0; j < 7; j++, dateNum++) {
@@ -82,7 +86,10 @@ function kCalendar(id, date) {
 				calendar += '				<td class="' + dateString[j] + '"> </td>';
 				continue;
 			}
-			calendar += '				<td class="' + dateString[j] + '">' + dateNum + '</td>';
+			if(currentYear == todayYear && currentMonth == todayMonth && currentDate == dateNum)
+				calendar += '				<td class="' + dateString[j] + ' on">' + dateNum + '</td>';
+			else
+				calendar += '				<td class="' + dateString[j] + '">' + dateNum + '</td>';
 		}
 		calendar += '			</tr>';
 	}
@@ -96,9 +103,128 @@ function kCalendar(id, date) {
 
 function clickEvent() {
 	$('#kCalendar td').on('click', function(){
+		var date = $('#kCalendar caption').data('date') + '-';
+		date += ($(this).text().length == 1) ? '0' + $(this).text() : $(this).text();
+		getSalesByDate(date);
 		$('#kCalendar td').removeClass('on');
 		$(this).addClass('on');
+		resetForm();
 	});
+}
+
+function getSalesByDate(date) {
+	$.ajax({
+		url: 'getSalesByDate.do',
+		type: 'post',
+		data: {'date': date},
+		dataType: 'json',
+		success: function(data) {
+			var html = '';
+			html = '<span>' + date + '</span>영업한 상조';
+			$target = $('.step03 .bottom');
+			$target.find('.tit').html(html);
+			html = '';
+			html += '<ul>';
+			$.each(data, function(index, value) {
+				var text = value.companyName + "<br/>(" + value.funeral + ", " + value.deadName + ")";
+				html += '<li><a href="javascript:clickCompany(\'' + value.salesNo + '\')">' + text + '</a></li>';
+			});
+			html += '</ul>';
+			$target.find('.list').html(html);
+		},
+		error: function() {
+			console.log('error');
+		}
+	});
+}
+
+function clickCompany(salesNo) {
+	$.ajax({
+		url:'getSales.do',
+		type: 'post',
+		data: {'salesNo': salesNo},
+		dataType: 'json',
+		success: function(data) {
+			var frm = document.frm_reg;
+			frm.salesNo.value = salesNo;
+			$('.btn_final').text('영업 수정');
+			$('.btn_mod').css('display', 'inline-block');
+			$.each(data, function(key, value) {
+				$('.sel_comp').val(getValue(key, 'companyName')).prop('selected', true);
+				$('#funeral').val(getValue(key, 'funeral'));
+				$('#deadName').val(getValue(key, 'deadName'));
+				$('#hosil').val(getValue(key, 'hosil'));
+				$('#leader').val(getValue(key, 'leader'));
+				$('.sel_area li').removeClass('on');
+				$.each($('.sel_area li'), function (i, v) {
+					if($(this).data('val') == getValue(key, 'areaName'))
+						$(this).addClass('on');
+				});
+				var html = '';
+				var count = 1;
+				$('.item_final').html('');
+				html += '<table><tbody>';
+				html += '	<tr>';
+				html += '       <th width="40">번호</th>';
+				html += '       <th width="*">품목</th>';
+				html += '       <th width="80">가격</th>';
+				html += '       <th width="60">수량</th>';
+				html += '       <th width="80">리베이트</th>';
+				html += '       <th width="80">수익</th>';
+				html += '       <th width="40"></th>';
+				html += '	</tr>';
+			    html += '</tbody></table>';
+				$('.item_final').html(html);
+				$.each(value, function(idx, val) {
+					var itemName = val.itemName;
+					var itemPrice = val.itemPrice;
+					var amount = val.amount;
+					var rebate = val.rebate;
+					var rebateType = val.rebateType;
+					var rebateNum = val.rebateNum;
+					var profit = val.profit;
+					
+					html = '';
+					html += '<tr>'
+					html += '	<td>' + count + '</td>'
+					html += '	<td>' + itemName + '</td>'
+					html += '	<td>' + comma(itemPrice) + ' 원</td>'
+					html += '	<td><input type="text" class="txt_updateAmount" value="' + amount + '" style="width: 30px; padding: 2px 3px; border: 1px solid #dedede; font-size: 11px; text-align: center;"/>';
+					html += '       <a href="#" class="btn_updateAmount"><i class="fas fa-check" style="padding: 0 0 0 3px; color: #ff5959; font-size: 10px;"></i></a></td>';
+					html += '	<td>' + comma(rebate) + ' 원</td>'
+					html += '	<td>' + comma(profit) + ' 원</td>'
+					html += '	<td><a href="#" class="btn_remove">삭제</a></td>'
+					html += '</tr>'
+					$('.item_final table tbody').append(html);
+					removeEvent();
+					
+					html = '';
+					html += '<div id="itemHide' + count + '" class="itemHide">';
+					html += '	<input type="hidden" name="itemName" value="' + itemName + '" />'
+					html += '	<input type="hidden" name="itemPrice" value="' + itemPrice + '" />'
+					html += '	<input type="hidden" name="amount" value="' + amount + '" />'
+					html += '	<input type="hidden" name="rebate" value="' + rebate + '" />'
+					html += '	<input type="hidden" name="rebateType" value="' + rebateType + '" />'
+					html += '	<input type="hidden" name="rebateNum" value="' + rebateNum + '" />'
+					html += '	<input type="hidden" name="profit" value="' + profit + '" />'
+					html += '</div>';
+					$('.item_final').append(html);
+					count ++;
+				});
+			});
+			updateAmountClick();
+		},
+		error: function() {
+			console.log('error');
+		}
+	});
+}
+
+function getValue(map, key) {
+	var split = map.split(key)[1]
+	var idx1 = split.indexOf('=');
+	var idx2 = split.indexOf(',');
+	return split.substr(idx1+1, idx2-1);
 }
 
 function yearCalendar(id, year, defaultDate, select) {

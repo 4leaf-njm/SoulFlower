@@ -13,16 +13,25 @@
 					<th width="70">단위</th>
 					<th></th>
 				</tr>
+				<c:choose>
+				<c:when test="${empty itemList }">
+					<tr>
+						<td colspan="4">품목을 추가해주세요.</td>
+					</tr>
+				</c:when>
+				<c:otherwise>
 				<c:forEach var="item" items="${itemList }" varStatus="status">
-				<tr>
-					<td>${status.count}</td>
-					<td>${item.itemName}</td>
-					<td>${item.itemUnit}</td>
-					<td>
-						<a href="javascript:remove('${item.itemNo}', '${item.itemName }', '${menu_code }')"><i class="fas fa-minus"></i></a>
-					</td>
-				</tr>
+					<tr>
+						<td>${status.count}</td>
+						<td>${item.itemName}</td>
+						<td>${item.itemUnit}</td>
+						<td>
+							<a href="javascript:remove('${item.itemNo}', '${item.itemName }', '${menu_code }')"><i class="fas fa-minus"></i></a>
+						</td>
+					</tr>
 				</c:forEach>
+				</c:otherwise>
+				</c:choose>
 			</table>
 			
 			<div class="add_area">
@@ -42,6 +51,9 @@
 	</div>
 
 	<script>
+		if('${msg}' != '') {
+			alert('${msg}');	
+		}
 		function insert() {
 			var frm = document.frm_add;
 			if(frm.itemName.value == '') {

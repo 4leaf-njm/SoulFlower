@@ -59,4 +59,14 @@ public class SalesDAOImpl implements SalesDAO {
 		return sqlSession.selectList(NAMESPACE + ".selectSalesListByDate", salesDate);
 	}
 
+	@Override
+	public List<SalesVO> selectRealSalesList() throws SQLException {
+		return sqlSession.selectList(NAMESPACE + ".selectRealSalesList");
+	}
+	
+	@Override
+	public void updateDepyn(SalesVO sales) throws SQLException {
+		sqlSession.update(NAMESPACE + ".updateDepyn", sales);
+	}
+
 }
