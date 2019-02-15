@@ -3,10 +3,7 @@
 
 <!-- footer (S) -->
 <div id="footer">
-	모바일 푸터
-	<!-- <div>
-		<h1 class="logo">Soul Flower</h1>
-		<p class="copyright">Copyright(c) 2018 Soul Flower. All rights Reserved.</p>
-	</div> -->
+	<h1 class="logo">Soul Flower</h1>
+	<p class="copyright">Copyright(c) 2018 Soul Flower. All rights Reserved.</p>
 </div>
 <!-- footer (E) -->

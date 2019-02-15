@@ -59,105 +59,9 @@
 				<input type="hidden" name="companyList" />
 				<input type="hidden" name="itemList" />
 			</form>
-			
-			<%-- <table class="tbl_wrap">
-				<tr>
-					<td colspan="2">
-						<div class="row_header">
-							<table>
-								<tr>
-									<th width="100px" class="first">
-										<div>
-											<a href="javascript:show_comp()"><i class="far fa-caret-square-down"></i>상조</a>
-											<div class="hide_box comp_box">
-												<div>
-													<div>
-														<label><input type="checkbox" checked="checked" value="all"/>전체</label>
-														<c:if test="${auth ne 'N' }">
-															<c:forEach var="company" items="${companyList }">
-																<label><input type="checkbox" name="company" value="${company }"/>${company }</label>
-															</c:forEach>
-														</c:if>
-													</div>
-													<a href="javascript:go_searchOk('company')" class="btn-sm">확인</a>
-												</div>
-											</div>
-										</div>
-										<div>
-											<a href="javascript:show_item()">품목<i class="far fa-caret-square-down"></i></a>
-											<div class="hide_box item_box">
-												<div>
-													<label><input type="checkbox" checked="checked" value="all"/>전체</label>
-													<c:if test="${auth ne 'N' }">
-														<c:forEach var="item" items="${itemList }">
-															<label><input type="checkbox" name="item" value="${item }"/>${item }</label>
-														</c:forEach>
-													</c:if>
-												</div>
-												<a href="javascript:go_searchOk('item')" class="btn-sm">확인</a>
-											</div>
-										</div>
-									</th>
-									<c:choose>
-										<c:when test="${empty itemCheckList or empty salesDataMap or auth eq 'N'}">
-											<th>품목 없음</th>
-										</c:when>
-										<c:otherwise>
-											<c:forEach var="item" items="${itemCheckList }">
-												<th><div class="tableHeader">${item }</div></th>
-											</c:forEach>
-										</c:otherwise>
-									</c:choose>
-								</tr>
-							</table>
-						</div>
-					</td>
-				</tr>
-				<c:choose>
-					<c:when test="${auth eq 'N' }">
-						<tr class="empty">
-							<td colspan="2">해당 권한이 없습니다.</td>
-						</tr>
-					</c:when>
-					<c:when test="${empty itemCheckList or empty salesDataMap}">
-						<tr class="empty">
-							<td colspan="2">조회된 데이터가 없습니다.</td>
-						</tr>
-					</c:when>
-					<c:otherwise>
-						<tr>
-							<td width="100px">
-								<div class="col_header">
-									<table>
-										<c:forEach var="dataMap" items="${salesDataMap }" varStatus="status">
-											<tr>
-												<td colspan="2"><div class="tableFirstCol">${dataMap.key }<i class="fas fa-caret-down"></i></div></td>
-											</tr>
-										</c:forEach>
-									</table>
-								</div>
-							</td>
-							<td>
-								<div class="row_content" onscroll="fnScroll()">
-									<table>
-										<c:forEach var="dataMap" items="${salesDataMap }" varStatus="status">
-											<tr>
-												<c:forEach var="amount" items="${dataMap.value.amountList }">
-													<td><div>${amount }</div></td>
-												</c:forEach>
-											</tr>
-										</c:forEach>
-									</table>
-								</div>
-							</td>
-						</tr>
-					</c:otherwise>
-				</c:choose>
-			</table> --%>
-			
 			<table class="outer">
 				<tr>
-					<th width="45">
+					<th width="70">
 						<a href="javascript:show_comp()"><i class="far fa-caret-square-down"></i>상조</a>
 						<div class="hide_box comp_box">
 							<div>
@@ -173,7 +77,7 @@
 							</div>
 						</div>
 					</th>
-					<th width="45">
+					<th width="70">
 						<a href="javascript:show_item()">품목<i class="far fa-caret-square-down"></i></a>
 						<div class="hide_box item_box">
 							<div>
@@ -224,7 +128,7 @@
 								<p class="inner_tit">* ${dataMap.key } 매출 상세정보</p>
 								<table class="inner">
 									<tr class="tr_info">
-										<th>일자</th>
+										<th style="padding: 10px 50px;">일자</th>
 										<th>지역</th>
 										<th>팀장명</th>
 										<th>장례식장</th>
@@ -272,8 +176,8 @@
 									</c:forEach>
 									<tr>
 										<td colspan="7" class="inner_res">
-											매출 <fmt:formatNumber value="${dataMap.value.profit }" pattern="#,##0" /> 원<br/>
-											리베이트 <fmt:formatNumber value="${dataMap.value.rebate }" pattern="#,##0" /> 원<br/>
+											매출 <fmt:formatNumber value="${dataMap.value.profit }" pattern="#,##0" /> 원&nbsp;&nbsp;&nbsp;
+											리베이트 <fmt:formatNumber value="${dataMap.value.rebate }" pattern="#,##0" /> 원&nbsp;&nbsp;&nbsp;
 											순수익 <fmt:formatNumber value="${dataMap.value.realProfit }" pattern="#,##0" /> 원
 										</td>
 									</tr>
@@ -287,8 +191,8 @@
 			<c:if test="${!empty itemCheckList and !empty salesDataMap and auth ne 'N'}">
 				<div class="sales_res">
 					<h3 class="res">
-						총 매출<span class="sale_money"><fmt:formatNumber value="${totalPrice }" pattern="#,##0" /></span><br/>
-						리베이트<span class="sale_money"><fmt:formatNumber value="${totalRebate }" pattern="#,##0" /></span><br/>
+						총 매출<span class="sale_money"><fmt:formatNumber value="${totalPrice }" pattern="#,##0" /></span>&nbsp;-&nbsp;
+						리베이트<span class="sale_money"><fmt:formatNumber value="${totalRebate }" pattern="#,##0" /></span>&nbsp;=&nbsp;
 						순 수익<span class="sale_money"><fmt:formatNumber value="${totalProfit }" pattern="#,##0" /></span>
 					</h3>
 				</div>
@@ -309,6 +213,8 @@
 						<colgroup>
 							<col />
 							<col width="130" />
+							<col />
+							<col width="130" />
 						</colgroup>
 						<tr>
 							<th>일자</th>
@@ -317,16 +223,12 @@
 						<tr>
 							<th>팀장명</th>
 							<td class="leader"></td>
-						</tr>
-						<tr>
 							<th>지역</th>
 							<td class="areaName"></td>
 						</tr>
 						<tr>
 							<th>장례식장</th>
 							<td class="funeral"></td>
-						</tr>
-						<tr>
 							<th>고인명</th>
 							<td class="deadName"></td>
 						</tr>
@@ -336,7 +238,7 @@
 						</tr>
 						<tr>
 							<th>미수금</th>
-							<td colspan="3" style="padding-bottom: 0;">
+							<td colspan="3">
 								<label><input type="radio" name="rd_none_dep" value="N" checked="checked" />없음</label>
 								<label><input type="radio" name="rd_none_dep" value="Y" />있음<input type="text" name="noneDep" readonly="readonly" /></label>
 							</td>
@@ -635,69 +537,5 @@
 				});
 			}
 		}
-	</script>
-	
-	<script>
-		$(document).ready(function(){
-		  fnAdjustTable();
-		});
-
-		fnAdjustTable = function(){
-
-		  var colCount = $('.row_content tr > td').length; //get total number of column
-
-		  var m = 0;
-		  var n = 0;
-		  var brow = 'mozilla';
-		  
-		  jQuery.each(jQuery.browser, function(i, val) {
-		    if(val == true){
-		      brow = i.toString();
-		    }
-		  });
-		  
-		  $('.tableHeader').each(function(i){
-		    if (m < colCount){
-
-		      if (brow == 'mozilla'){
-		        $('.row_header .first').css("width",$('.tableFirstCol').innerWidth());//for adjusting first td
-		        $(this).css('width',$('.col_header td:eq('+m+')').innerWidth());//for assigning width to table Header div
-		      }
-		      else if (brow == 'msie'){
-		        $('.row_header .first').css("width",$('.tableFirstCol').width());
-		        $(this).css('width',$('.col_header td:eq('+m+')').width()-2);//In IE there is difference of 2 px
-		      }
-		      else if (brow == 'safari'){
-		        $('.row_header .first').css("width",$('.tableFirstCol').width());
-		        $(this).css('width',$('.col_header td:eq('+m+')').width());
-		      }
-		      else {
-		        $('.row_header .first').css("width",$('.tableFirstCol').width());
-		        $(this).css('width',$('.col_header td:eq('+m+')').innerWidth());
-		      }
-		    }
-		    m++;
-		  });
-
-		  $('.tableFirstCol').each(function(i){
-		    if(brow == 'mozilla'){
-		      $(this).css('height',$('.col_header td:eq('+colCount*n+')').outerHeight());//for providing height using scrollable table column height
-		    }
-		    else if(brow == 'msie'){
-		      $(this).css('height',$('.col_header td:eq('+colCount*n+')').innerHeight()-2);
-		    }
-		    else {
-		      $(this).css('height',$('.col_header td:eq('+colCount*n+')').height());
-		    }
-		    n++;
-		  });
-
-		};
-
-		//function to support scrolling of title and first column
-		fnScroll = function(){
-		  $('.row_header').scrollLeft($('.col_header').scrollLeft());
-		  $('.col_header').scrollTop($('.col_header').scrollTop());
-		};
 	</script>
 </div>

@@ -34,11 +34,16 @@
 			</c:choose>
 		</table>
 		<h2 class="acc_title">권한 부여</h2>
+		<ul class="acc_list">
+			<c:forEach var="role" items="${roleList }" varStatus="status">
+				<li>${status.count}.&nbsp;&nbsp;${role.roleText }</li>
+			</c:forEach>
+		</ul>
 		<table class="acc_tbl">
 			<tr>
 				<th>성명</th>
-				<c:forEach var="role" items="${roleList }">
-					<th>${role.roleText }</th>
+				<c:forEach var="role" items="${roleList }" varStatus="status">
+					<th>${status.count }</th>
 				</c:forEach>
 				<th>비고</th>
 			</tr>

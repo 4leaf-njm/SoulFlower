@@ -41,7 +41,7 @@
 					</c:choose>
 				</div>
 			</div>
-			<form action="searchSale.do" method="post" name="frm_search">
+			<form action="searchRealSale.do" method="post" name="frm_search">
 				<input type="hidden" name="menu_code" value="${menu_code }" />
 				<input type="hidden" name="type" />
 				<input type="hidden" name="date" />
@@ -51,7 +51,7 @@
 		</div>
 		
 		<div class="sales_list">
-			<form action="search.do" method="post" name="frm_search2">
+			<form action="searchReal.do" method="post" name="frm_search2">
 				<input type="hidden" name="menu_code" value="${menu_code }" />
 				<input type="hidden" name="type" />
 				<input type="hidden" name="date" />
@@ -59,102 +59,6 @@
 				<input type="hidden" name="companyList" />
 				<input type="hidden" name="itemList" />
 			</form>
-			
-			<%-- <table class="tbl_wrap">
-				<tr>
-					<td colspan="2">
-						<div class="row_header">
-							<table>
-								<tr>
-									<th width="100px" class="first">
-										<div>
-											<a href="javascript:show_comp()"><i class="far fa-caret-square-down"></i>상조</a>
-											<div class="hide_box comp_box">
-												<div>
-													<div>
-														<label><input type="checkbox" checked="checked" value="all"/>전체</label>
-														<c:if test="${auth ne 'N' }">
-															<c:forEach var="company" items="${companyList }">
-																<label><input type="checkbox" name="company" value="${company }"/>${company }</label>
-															</c:forEach>
-														</c:if>
-													</div>
-													<a href="javascript:go_searchOk('company')" class="btn-sm">확인</a>
-												</div>
-											</div>
-										</div>
-										<div>
-											<a href="javascript:show_item()">품목<i class="far fa-caret-square-down"></i></a>
-											<div class="hide_box item_box">
-												<div>
-													<label><input type="checkbox" checked="checked" value="all"/>전체</label>
-													<c:if test="${auth ne 'N' }">
-														<c:forEach var="item" items="${itemList }">
-															<label><input type="checkbox" name="item" value="${item }"/>${item }</label>
-														</c:forEach>
-													</c:if>
-												</div>
-												<a href="javascript:go_searchOk('item')" class="btn-sm">확인</a>
-											</div>
-										</div>
-									</th>
-									<c:choose>
-										<c:when test="${empty itemCheckList or empty salesDataMap or auth eq 'N'}">
-											<th>품목 없음</th>
-										</c:when>
-										<c:otherwise>
-											<c:forEach var="item" items="${itemCheckList }">
-												<th><div class="tableHeader">${item }</div></th>
-											</c:forEach>
-										</c:otherwise>
-									</c:choose>
-								</tr>
-							</table>
-						</div>
-					</td>
-				</tr>
-				<c:choose>
-					<c:when test="${auth eq 'N' }">
-						<tr class="empty">
-							<td colspan="2">해당 권한이 없습니다.</td>
-						</tr>
-					</c:when>
-					<c:when test="${empty itemCheckList or empty salesDataMap}">
-						<tr class="empty">
-							<td colspan="2">조회된 데이터가 없습니다.</td>
-						</tr>
-					</c:when>
-					<c:otherwise>
-						<tr>
-							<td width="100px">
-								<div class="col_header">
-									<table>
-										<c:forEach var="dataMap" items="${salesDataMap }" varStatus="status">
-											<tr>
-												<td colspan="2"><div class="tableFirstCol">${dataMap.key }<i class="fas fa-caret-down"></i></div></td>
-											</tr>
-										</c:forEach>
-									</table>
-								</div>
-							</td>
-							<td>
-								<div class="row_content" onscroll="fnScroll()">
-									<table>
-										<c:forEach var="dataMap" items="${salesDataMap }" varStatus="status">
-											<tr>
-												<c:forEach var="amount" items="${dataMap.value.amountList }">
-													<td><div>${amount }</div></td>
-												</c:forEach>
-											</tr>
-										</c:forEach>
-									</table>
-								</div>
-							</td>
-						</tr>
-					</c:otherwise>
-				</c:choose>
-			</table> --%>
-			
 			<table class="outer">
 				<tr>
 					<th width="45">
@@ -230,33 +134,30 @@
 										<th>장례식장</th>
 										<th>고인명</th>
 										<th>호실</th>
-										<th>입금여부</th>
+										<th>미수금</th>
 									</tr>
 									<c:forEach var="sales" items="${dataMap.value.salesList }">
-										<tr class="tr_info" data-no="${sales.salesNo }">
+										<tr class="tr_info">
 											<td>${sales.salesDate }</td>
 											<td>${sales.areaName }</td>
 											<td>${sales.leader }</td>
 											<td>${sales.funeral }</td>
 											<td>${sales.deadName }</td>
 											<td>${sales.hosil }</td>
-											<td>
-												<c:choose>
-												<c:when test="${sales.depyn eq 'N' }">
-													<a href="#" class="btn_deposit">입금확인</a>
-												</c:when>
-												<c:otherwise><span style="font-weight: bold; color: #fd3d3d;">입금완료</span></c:otherwise>
-												</c:choose>
-											</td>
+											<td><fmt:formatNumber value="${sales.noneDep }" pattern="#,##0" /> 원</td>
 										</tr>
-										<tr class="tr_item">
+										<tr class="tr_item" data-no="${sales.salesNo }">
 											<th></th>
 											<th>품목</th>
 											<th>가격</th>
 											<th>수량</th>
-											<th>매출</th>
 											<th>리베이트</th>
 											<th>수익</th>
+											<th>
+												<c:if test="${sales.noneDep ne 0 }">
+										   		   <a href="#" class="btn_deposit">미수금</a>
+										   		</c:if>
+											</th>
 										</tr>
 										<c:forEach var="det" items="${dataMap.value.salesDetMap[sales.salesNo] }">
 											<tr class="tr_item">
@@ -264,14 +165,14 @@
 												<td>${det.itemName }</td>
 												<td><fmt:formatNumber value="${det.itemPrice }" pattern="#,##0" /></td>
 												<td>${det.amount }</td>
-												<td><fmt:formatNumber value="${det.itemPrice * det.amount }" pattern="#,##0" /></td>
 												<td><fmt:formatNumber value="${det.rebate }" pattern="#,##0" /></td>
 												<td><fmt:formatNumber value="${det.profit }" pattern="#,##0" /></td>
+												<td></td>
 											</tr>
 										</c:forEach>
 									</c:forEach>
 									<tr>
-										<td colspan="7" class="inner_res">
+										<td colspan="8" class="inner_res">
 											매출 <fmt:formatNumber value="${dataMap.value.profit }" pattern="#,##0" /> 원<br/>
 											리베이트 <fmt:formatNumber value="${dataMap.value.rebate }" pattern="#,##0" /> 원<br/>
 											순수익 <fmt:formatNumber value="${dataMap.value.realProfit }" pattern="#,##0" /> 원
@@ -289,6 +190,7 @@
 					<h3 class="res">
 						총 매출<span class="sale_money"><fmt:formatNumber value="${totalPrice }" pattern="#,##0" /></span><br/>
 						리베이트<span class="sale_money"><fmt:formatNumber value="${totalRebate }" pattern="#,##0" /></span><br/>
+						미수금<span class="sale_money"><fmt:formatNumber value="${totalNonedep }" pattern="#,##0" /></span><br/>
 						순 수익<span class="sale_money"><fmt:formatNumber value="${totalProfit }" pattern="#,##0" /></span>
 					</h3>
 				</div>
@@ -296,7 +198,7 @@
 		</div>
 		<div class="check_popup">
 			<div class="head">
-				<h3>입금 확인</h3>
+				<h3>미수금 입금확인</h3>
 			</div>
 			<div class="body">
 				<form action="checkDeposit.do" method="post" name="frm_chk_dep">
@@ -304,6 +206,7 @@
 					<input type="hidden" name="type" />
 					<input type="hidden" name="date" />
 					<input type="hidden" name="areaCheckList" />
+					<input type="hidden" name="page" value="real" />
 					<input type="hidden" name="salesNo" />
 					<table>
 						<colgroup>
@@ -331,15 +234,8 @@
 							<td class="deadName"></td>
 						</tr>
 						<tr>
-							<th>입금금액</th>
-							<td colspan="3" class="deposit"></td>
-						</tr>
-						<tr>
-							<th>미수금</th>
-							<td colspan="3" style="padding-bottom: 0;">
-								<label><input type="radio" name="rd_none_dep" value="N" checked="checked" />없음</label>
-								<label><input type="radio" name="rd_none_dep" value="Y" />있음<input type="text" name="noneDep" readonly="readonly" /></label>
-							</td>
+							<th><span>입금한 미수금</span></th>
+							<td colspan="3"><input type="text" name="noneDep" /></td>
 						</tr>
 					</table>
 				</form>
@@ -519,7 +415,7 @@
 			
 			$(this).toggleClass('on');
 			if($(this).hasClass('on')) {
-				var no = $(this).parents('.tr_info').data('no');
+				var no = $(this).parents('.tr_item').data('no');
 				popupOpen(no);
 			} else {
 				popupClose();
@@ -528,31 +424,25 @@
 		
 		var frmdep = document.frm_chk_dep;
 		function popupOk() {
-			var rdval = $('input:radio[name=rd_none_dep]:checked').val();
 			var noneDep = $('input[name=noneDep]');
-			var deposit = $('.check_popup .deposit').text().replace(' 원', '').replace(/,/gi, '');
-			if(rdval == 'Y') {
-				if(noneDep.val() == '') {
-					alert('미수금을 입력해주세요.');
-					noneDep.focus();
-					return;
-				} else if (isNaN(noneDep.val()) == true) {
-					alert('숫자만 입력해주세요.');
-					noneDep.focus();
-					return;
-				} else if (parseInt(noneDep.val()) > parseInt(deposit)) {
-					alert('입금 금액보다 클 수 없습니다.');
-					noneDep.focus();
-					return;
-				}
+			if(noneDep.val() == '') {
+				alert('미수금을 입력해주세요.');
+				noneDep.focus();
+				return;
+			} else if (isNaN(noneDep.val()) == true) {
+				alert('숫자만 입력해주세요.');
+				noneDep.focus();
+				return;
+			} else if (parseInt(noneDep.val()) > parseInt(noneDep.data('dep'))) {
+				alert('입력하신 금액은 ' + noneDep.data('dep') + '원 보다 작아야합니다.');
+				noneDep.focus();
+				return;
 			}
 			var result = confirm('입금 확인이 되었습니까 ?');
 			if(result) {
 				var type = '${type}';
 				var date = '${date}';
 				var areaCheckList = '${areaCheckList}';
-				if(rdval == 'N') 
-					noneDep.val('0');
 				frmdep.type.value = type;
 				frmdep.date.value = date;
 				frmdep.areaCheckList.value = areaCheckList;
@@ -573,11 +463,8 @@
 						$('.check_popup .areaName').text(getValue(key, 'areaName'));
 						$('.check_popup .funeral').text(getValue(key, 'funeral'));
 						$('.check_popup .deadName').text(getValue(key, 'deadName'));
-						var deposit = 0;
-						$.each(value, function(idx, val) {
-							deposit += val.itemPrice * val.amount; 
-						});
-						$('.check_popup .deposit').text(comma(deposit) + ' 원');
+						$('.check_popup input[name=noneDep]').val(getValue(key, 'noneDep'));
+						$('.check_popup input[name=noneDep]').data('dep', getValue(key, 'noneDep'));
 					});
 					frmdep.salesNo.value = no;
 					$('.check_popup').show();
@@ -597,17 +484,6 @@
 			var split = str.split('(')[1].replace(')', '').split(key)[1];
 			return split.split(',')[0].replace('=', '');
 		}
-		
-		$('input:radio[name=rd_none_dep]').on('change', function() {
-			var val = $(this).val();
-			if(val == 'Y') {
-				$('input[name=noneDep]').focus();
-				$('input[name=noneDep]').prop('readonly', false);
-			} else {
-				$('input[name=noneDep]').val('');
-				$('input[name=noneDep]').prop('readonly', true);
-			}
-		});
 	</script>
 	
 	<script>
@@ -635,69 +511,5 @@
 				});
 			}
 		}
-	</script>
-	
-	<script>
-		$(document).ready(function(){
-		  fnAdjustTable();
-		});
-
-		fnAdjustTable = function(){
-
-		  var colCount = $('.row_content tr > td').length; //get total number of column
-
-		  var m = 0;
-		  var n = 0;
-		  var brow = 'mozilla';
-		  
-		  jQuery.each(jQuery.browser, function(i, val) {
-		    if(val == true){
-		      brow = i.toString();
-		    }
-		  });
-		  
-		  $('.tableHeader').each(function(i){
-		    if (m < colCount){
-
-		      if (brow == 'mozilla'){
-		        $('.row_header .first').css("width",$('.tableFirstCol').innerWidth());//for adjusting first td
-		        $(this).css('width',$('.col_header td:eq('+m+')').innerWidth());//for assigning width to table Header div
-		      }
-		      else if (brow == 'msie'){
-		        $('.row_header .first').css("width",$('.tableFirstCol').width());
-		        $(this).css('width',$('.col_header td:eq('+m+')').width()-2);//In IE there is difference of 2 px
-		      }
-		      else if (brow == 'safari'){
-		        $('.row_header .first').css("width",$('.tableFirstCol').width());
-		        $(this).css('width',$('.col_header td:eq('+m+')').width());
-		      }
-		      else {
-		        $('.row_header .first').css("width",$('.tableFirstCol').width());
-		        $(this).css('width',$('.col_header td:eq('+m+')').innerWidth());
-		      }
-		    }
-		    m++;
-		  });
-
-		  $('.tableFirstCol').each(function(i){
-		    if(brow == 'mozilla'){
-		      $(this).css('height',$('.col_header td:eq('+colCount*n+')').outerHeight());//for providing height using scrollable table column height
-		    }
-		    else if(brow == 'msie'){
-		      $(this).css('height',$('.col_header td:eq('+colCount*n+')').innerHeight()-2);
-		    }
-		    else {
-		      $(this).css('height',$('.col_header td:eq('+colCount*n+')').height());
-		    }
-		    n++;
-		  });
-
-		};
-
-		//function to support scrolling of title and first column
-		fnScroll = function(){
-		  $('.row_header').scrollLeft($('.col_header').scrollLeft());
-		  $('.col_header').scrollTop($('.col_header').scrollTop());
-		};
 	</script>
 </div>

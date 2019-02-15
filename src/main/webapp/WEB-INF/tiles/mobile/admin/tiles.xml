@@ -23,6 +23,10 @@
 		<put-attribute name="content" value="/WEB-INF/views/mobile/admin/main.jsp" />
 	</definition>
 
+	<definition name="mobile/admin/real_sales" extends="adminLayoutM">
+		<put-attribute name="content" value="/WEB-INF/views/mobile/admin/real_sales.jsp" />
+	</definition>
+	
 	<definition name="mobile/admin/register" extends="adminLayoutM">
 		<put-attribute name="content" value="/WEB-INF/views/mobile/admin/register.jsp" />
 	</definition>

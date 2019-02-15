@@ -19,11 +19,14 @@
 <link href="${pageContext.request.contextPath }/resources/plugin/scrollbar/jquery.basic.css" rel="stylesheet">
 <link href="${pageContext.request.contextPath }/resources/plugin/scrollbar/jquery.scrollbar.css" rel="stylesheet">
 <link href="${pageContext.request.contextPath }/resources/plugin/calendar/calendar.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath }/resources/plugin/swiper/swiper.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="${pageContext.request.contextPath }/resources/plugin/scrollbar/jquery.scrollbar.min.js"></script>
 <script src="${pageContext.request.contextPath }/resources/js/default.js?ver=${ver}"></script>
+<script src="${pageContext.request.contextPath }/resources/js/mobile.js?ver=${ver}"></script>
 <script src="${pageContext.request.contextPath }/resources/plugin/calendar/calendar.js"></script>
+<script src="${pageContext.request.contextPath }/resources/plugin/swiper/swiper.min.js"></script>
 </head>
 <body>
 	<!-- wrapper (S) -->

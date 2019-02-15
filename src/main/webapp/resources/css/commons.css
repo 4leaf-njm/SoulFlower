@@ -33,7 +33,7 @@
 
 #header .head_rt .welcome {
 	display: inline-block;
-    color: #edf6fa;
+    color: #353535;
     font-family: '나눔고딕';
     font-size: 11px;
     font-weight: bold;
@@ -52,7 +52,7 @@
 	position: relative;
 	bottom: 1px;
     padding: 5px 10px;
-    color: #3c6893;
+    color: #353535;
     font-family: '나눔고딕';
     font-weight: bold;
     font-size: 8px;

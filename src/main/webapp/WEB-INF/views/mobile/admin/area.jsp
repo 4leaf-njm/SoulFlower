@@ -5,6 +5,15 @@
 <div id="container">
 	<div class="content">
 		<div class="align-center">
+			<div class="add_area">
+				<form method="post" name="frm_add">
+					<div class="row">
+						<label for="areaName">지역명</label>
+						<input type="text" name="areaName" id="areaName" />
+					</div>
+					<a href="javascript:insert()" class="btn_add">추가하기</a>
+				</form>
+			</div>
 			<table class="tbl_sub">
 				<tr>
 					<th>번호</th>
@@ -30,15 +39,6 @@
 				</c:otherwise>
 				</c:choose>
 			</table>
-			<div class="add_area">
-				<form method="post" name="frm_add">
-					<div class="row">
-						<label for="areaName">지역명</label>
-						<input type="text" name="areaName" id="areaName" />
-					</div>
-					<a href="javascript:insert()" class="btn_add">추가하기</a>
-				</form>
-			</div>
 		</div>
 	</div>
 

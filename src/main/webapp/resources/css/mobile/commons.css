@@ -1,1 +1,145 @@
 @CHARSET "UTF-8";
+
+@font-face {
+  font-family: duepuntozero;
+  src: url(../../fonts/duepuntozero/Duepuntozero-ExtraBoldTrial.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: droid-serif;
+  src: url(../../fonts/droid-serif/DroidSerif-Bold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: droid-serif-normal;
+  src: url(../../fonts/droid-serif/DroidSerif-Regular.ttf) format('truetype');
+}
+
+#wrapper {
+	background: url(../../images/bg/bg_main.png) repeat-x 0 0;
+}
+
+#header {
+	overflow: hidden;
+}
+
+#header .head_lt {
+	width: 100%;
+	text-align: center;
+}
+
+#header .head_lt .logo {
+	margin: 0 0 0 15px;
+	height: 48px;
+	line-height: 47px;
+    color: #0658a9;
+	font-family: 'duepuntozero';
+    font-size: 25px;
+    text-shadow: 3px -1px 1px #ffffff;
+    letter-spacing: 4px;
+}
+
+#header .head_rt {
+	padding: 0 10px;
+	width: 100%;
+	text-align: right;
+}
+
+#header .head_rt .welcome {
+	display: inline-block;
+    color: #353535;
+    font-family: '나눔고딕';
+    font-size: 11px;
+    font-weight: bold;
+}
+
+#header .head_rt .welcome span {
+	padding-right: 8px;
+}
+
+#header .head_rt .logout {
+	display: inline-block;
+    margin: 0 0 0 13px;
+}
+
+#header .head_rt .logout a {
+	position: relative;
+	bottom: 1px;
+    padding: 5px 10px;
+    color: #353535;
+    font-family: '나눔고딕';
+    font-weight: bold;
+    font-size: 8px;
+    background: #fff;
+    border: 1px solid #90c0d6;
+    border-radius: 3px;
+}
+
+#header .gnb {
+	display: inline-block;
+	margin: 15px 0 0;
+	width: 100%;
+	height: 45px;
+    border: 2px solid #255487;
+    border-radius: 4px;
+	vertical-align: top;
+	background: url(../../images/bg/bg_menu_inner.png) repeat-x 0 0;
+}
+
+#header .gnb .swiper-slide {
+	display: inline-block;
+	margin: 0 15px;
+	width: auto !important;
+	height: auto !important;
+}
+
+#header .gnb .swiper-slide a {
+    display: block;
+    height: 45px;
+    line-height: 45px;
+    color: #f5fafe;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+#header .gnb .swiper-slide.on a {
+    color: #f7ffad;
+}
+
+#container {
+    clear: both;
+	min-height: 530px;
+    padding: 25px 0 20px;
+}
+
+#container > .content {
+	width: 100%;
+    margin: 0 auto;
+}
+
+#footer {
+	overflow: hidden;
+	height: 65px;
+	background: url(../../images/bg/bg_footer.png) repeat-x 0 0;
+}
+
+#footer .logo {
+    text-align: center;
+    color: #fff;
+    font-size: 19px;
+    text-shadow: 3px 3px 3px #4c4b4b;
+    padding: 10px 0;
+}
+
+#footer .copyright {
+	padding: 5px 0;
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    text-shadow: 1.5px 1px 3px #3e3e3e;
+    text-align: center;
+}
+
+.scrollBar {
+	overflow-y: scroll;
+}
